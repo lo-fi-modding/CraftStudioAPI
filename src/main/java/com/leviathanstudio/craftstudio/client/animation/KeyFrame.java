@@ -1,27 +1,23 @@
 package com.leviathanstudio.craftstudio.client.animation;
 
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.vecmath.Quat4f;
-import javax.vecmath.Vector3f;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Class that store informations about a model at a specific time of an
  * animation.
- * 
+ *
  * @since 0.3.0
- * 
+ *
  * @author Timmypote
  */
-@SideOnly(Side.CLIENT)
 public class KeyFrame implements Cloneable
 {
     /** Map of quaternions for block rotation */
-    protected Map<String, Quat4f>   modelRenderersRotations    = new HashMap<>();
+    protected Map<String, Quaternion>   modelRenderersRotations    = new HashMap<>();
     /** Map of vector for block translation */
     protected Map<String, Vector3f> modelRenderersTranslations = new HashMap<>();
     /** Map of vector for block offset */

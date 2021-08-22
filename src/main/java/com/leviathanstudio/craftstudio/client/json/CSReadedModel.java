@@ -3,9 +3,6 @@ package com.leviathanstudio.craftstudio.client.json;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 /**
  * Class that store information relative to a model.
  *
@@ -13,7 +10,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  *
  * @author Timmypote
  */
-@SideOnly(Side.CLIENT)
 public class CSReadedModel
 {
     private String                   name;

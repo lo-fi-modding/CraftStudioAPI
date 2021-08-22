@@ -14,19 +14,20 @@ import com.leviathanstudio.craftstudio.common.animation.IAnimated;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
 /**
  * Client proxy of the CraftStudioApi
- * 
+ *
  * @since 0.3.0
- * 
+ *
  * @author Timmypote
  * @author ZeAmateis
  */
 public class CSClientProxy extends CSCommonProxy
 {
     @Override
-    public void preInit(FMLPreInitializationEvent e) {
+    public void preInit(FMLCommonSetupEvent e) {
         super.preInit(e);
         this.loadCraftStudioLoaders(e);
     }
@@ -36,7 +37,7 @@ public class CSClientProxy extends CSCommonProxy
         return new ClientAnimationHandler<>();
     }
 
-    private void loadCraftStudioLoaders(FMLPreInitializationEvent e) {
+    private void loadCraftStudioLoaders(FMLCommonSetupEvent e) {
         String methodName, className;
         Method method;
 
@@ -52,12 +53,12 @@ public class CSClientProxy extends CSCommonProxy
                 method.invoke(null);
             } catch (NoSuchMethodException | SecurityException | ClassNotFoundException e1) {
                 e1.printStackTrace();
-                CraftStudioApi.getLogger().error("Error loading @CraftStudioLoader in class " + className + " for method " + methodName + "().");
-                CraftStudioApi.getLogger().error("Does that method has arguments ? Because it should have none.");
+                CraftStudioApi.LOGGER.error("Error loading @CraftStudioLoader in class {} for method {}().", className, methodName);
+                CraftStudioApi.LOGGER.error("Does that method has arguments ? Because it should have none.");
             } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NullPointerException e1) {
                 e1.printStackTrace();
-                CraftStudioApi.getLogger().error("Error loading craftstudio assets in class " + className + " for method " + methodName + "().");
-                CraftStudioApi.getLogger().error("Is that method 'static' ? Because it should.");
+                CraftStudioApi.LOGGER.error("Error loading craftstudio assets in class {} for method {}().", className, methodName);
+                CraftStudioApi.LOGGER.error("Is that method 'static' ? Because it should.");
             }
         }
 

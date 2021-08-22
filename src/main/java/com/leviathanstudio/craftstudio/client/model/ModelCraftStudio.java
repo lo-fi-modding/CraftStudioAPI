@@ -1,33 +1,28 @@
 package com.leviathanstudio.craftstudio.client.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.leviathanstudio.craftstudio.client.animation.ClientAnimationHandler;
 import com.leviathanstudio.craftstudio.client.exception.CSResourceNotRegisteredException;
 import com.leviathanstudio.craftstudio.client.json.CSReadedModel;
 import com.leviathanstudio.craftstudio.client.json.CSReadedModelBlock;
 import com.leviathanstudio.craftstudio.client.registry.RegistryHandler;
 import com.leviathanstudio.craftstudio.common.animation.IAnimated;
-
 import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.client.model.PositionTextureVertex;
-import net.minecraft.entity.Entity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Model to represent a CraftStudio model in Minecraft.
- * 
+ *
  * @since 0.3.0
- * 
+ *
  * @author Timmypote
  * @author ZeAmateis
  */
-@SideOnly(Side.CLIENT)
 public class ModelCraftStudio extends ModelBase
 {
     private List<CSModelRenderer> parentBlocks = new ArrayList<>();
@@ -67,7 +62,7 @@ public class ModelCraftStudio extends ModelBase
         this.textureWidth = textureWidth;
         this.textureHeight = textureHeight;
 
-        CSReadedModel rModel = RegistryHandler.modelRegistry.getObject(modelIn);
+        CSReadedModel rModel = RegistryHandler.modelRegistry.get(modelIn);
         if (rModel == null)
             throw new CSResourceNotRegisteredException(modelIn.toString());
         CSModelRenderer modelRend;
@@ -93,19 +88,19 @@ public class ModelCraftStudio extends ModelBase
     private CSModelRenderer generateCSModelRend(CSReadedModelBlock rBlock) {
         CSModelRenderer modelRend = new CSModelRenderer(this, rBlock.getName(), rBlock.getTexOffset()[0], rBlock.getTexOffset()[1]);
         if (rBlock.getVertex() != null) {
-            PositionTextureVertex vertices[] = new PositionTextureVertex[8];
+            ModelPart.Vertex vertices[] = new ModelPart.Vertex[8];
             for (int i = 0; i < 8; i++)
-                vertices[i] = new PositionTextureVertex(rBlock.getVertex()[i][0], rBlock.getVertex()[i][1], rBlock.getVertex()[i][2], 0.0F, 0.0F);
-            modelRend.addBox(vertices, CSModelBox.getTextureUVsForRect(rBlock.getTexOffset()[0], rBlock.getTexOffset()[1], rBlock.getSize().x,
-                    rBlock.getSize().y, rBlock.getSize().z));
+                vertices[i] = new ModelPart.Vertex(rBlock.getVertex()[i][0], rBlock.getVertex()[i][1], rBlock.getVertex()[i][2], 0.0F, 0.0F);
+            modelRend.addBox(vertices, CSModelBox.getTextureUVsForRect(rBlock.getTexOffset()[0], rBlock.getTexOffset()[1], rBlock.getSize().x(),
+                    rBlock.getSize().y(), rBlock.getSize().z()));
         }
         else
-            modelRend.addBox(-rBlock.getSize().x / 2, -rBlock.getSize().y / 2, -rBlock.getSize().z / 2, rBlock.getSize().x, rBlock.getSize().y,
-                    rBlock.getSize().z);
-        modelRend.setDefaultRotationPoint(rBlock.getRotationPoint().x, rBlock.getRotationPoint().y, rBlock.getRotationPoint().z);
-        modelRend.setInitialRotationMatrix(rBlock.getRotation().x, rBlock.getRotation().y, rBlock.getRotation().z);
-        modelRend.setDefaultOffset(rBlock.getOffset().x, rBlock.getOffset().y, rBlock.getOffset().z);
-        modelRend.setDefaultStretch(rBlock.getStretch().x, rBlock.getStretch().y, rBlock.getStretch().z);
+            modelRend.addBox(-rBlock.getSize().x() / 2, -rBlock.getSize().y() / 2, -rBlock.getSize().z() / 2, rBlock.getSize().x(), rBlock.getSize().y(),
+                    rBlock.getSize().z());
+        modelRend.setDefaultRotationPoint(rBlock.getRotationPoint().x(), rBlock.getRotationPoint().y(), rBlock.getRotationPoint().z());
+        modelRend.setInitialRotationMatrix(rBlock.getRotation().x(), rBlock.getRotation().y(), rBlock.getRotation().z());
+        modelRend.setDefaultOffset(rBlock.getOffset().x(), rBlock.getOffset().y(), rBlock.getOffset().z());
+        modelRend.setDefaultStretch(rBlock.getStretch().x(), rBlock.getStretch().y(), rBlock.getStretch().z());
         modelRend.setTextureSize(this.textureWidth, this.textureHeight);
         return modelRend;
     }
@@ -113,13 +108,13 @@ public class ModelCraftStudio extends ModelBase
     /**
      * Render function for an animated block<br>
      * Must be called in a
-     * {@link net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer#renderTileEntityAt
-     * renderTileEntityAt} method
+     * {@link net.minecraft.client.renderer.blockentity.BlockEntityRenderer#render
+     * render} method
      *
      * @param tileEntityIn
      *            The TileEntity who implements {@link IAnimated}
      */
-    public void render(TileEntity tileEntityIn) {
+    public void render(BlockEntity tileEntityIn) {
         float modelScale = 0.0625F;
         ClientAnimationHandler.performAnimationInModel(this.parentBlocks, (IAnimated) tileEntityIn);
         for (int i = 0; i < this.parentBlocks.size(); i++)
@@ -129,8 +124,8 @@ public class ModelCraftStudio extends ModelBase
     /**
      * Render function for a non-animated block<br>
      * Must be called in a
-     * {@link net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer#renderTileEntityAt
-     * renderTileEntityAt} method
+     * {@link net.minecraft.client.renderer.blockentity.BlockEntityRenderer#render
+     * render} method
      */
     public void render() {
         float modelScale = 0.0625F;
@@ -149,20 +144,16 @@ public class ModelCraftStudio extends ModelBase
 
     /** Return CSModelRenderer by his name and parts */
     public static CSModelRenderer getModelRendererFromNameAndBlock(String name, CSModelRenderer block) {
-        CSModelRenderer childModel, result;
-
         if (block.boxName.equals(name))
             return block;
 
-        for (ModelRenderer child : block.childModels)
-            if (child instanceof CSModelRenderer) {
-                childModel = (CSModelRenderer) child;
-                result = getModelRendererFromNameAndBlock(name, childModel);
-                if (result != null)
-                    return result;
+        return (CSModelRenderer)block.getAllParts().filter(child -> {
+            if(child instanceof final CSModelRenderer childModel) {
+                return getModelRendererFromNameAndBlock(name, childModel) != null;
             }
 
-        return null;
+            return false;
+        }).findFirst().get();
     }
 
     /** Return CSModelRenderer by his name */

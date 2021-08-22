@@ -1,24 +1,23 @@
 package com.leviathanstudio.craftstudio.common.network;
 
-import java.util.UUID;
-
 import com.leviathanstudio.craftstudio.CraftStudioApi;
 import com.leviathanstudio.craftstudio.common.animation.AnimationHandler;
 import com.leviathanstudio.craftstudio.common.animation.IAnimated;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import java.util.UUID;
+import java.util.function.Supplier;
 
 /**
  * Message to send an IAnimated event to the server.
- * 
+ *
  * @since 0.3.0
- * 
+ *
  * @author Timmypote
  */
 public class ServerIAnimatedEventMessage extends IAnimatedEventMessage
@@ -46,44 +45,47 @@ public class ServerIAnimatedEventMessage extends IAnimatedEventMessage
         super(eventObj);
     }
 
+  public static ServerIAnimatedEventMessage fromBytes(final FriendlyByteBuf buf) {
+    return IAnimatedEventMessage.fromBytes(new ServerIAnimatedEventMessage(), buf);
+  }
+
     /**
      * Handler for IAnimated event messages send to the server.
-     * 
+     *
      * @since 0.3.0
-     * 
+     *
      * @author Timmypote
      */
     public static class ServerIAnimatedEventHandler extends IAnimatedEventHandler
-            implements IMessageHandler<ServerIAnimatedEventMessage, ClientIAnimatedEventMessage>
     {
         @Override
-        public ClientIAnimatedEventMessage onMessage(ServerIAnimatedEventMessage message, MessageContext ctx) {
-            FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(() -> {
+        public boolean onMessage(IAnimatedEventMessage message, Supplier<NetworkEvent.Context> ctx) {
+            ctx.get().enqueueWork(() -> {
                 if (super.onMessage(message, ctx)) {
-                    EntityPlayerMP player = ctx.getServerHandler().player;
+                    ServerPlayer player = ctx.get().getSender();
                     message.animated.getAnimationHandler();
-                    boolean succes = AnimationHandler.onServerIAnimatedEvent(message);
-                    if (succes && message.event != EnumIAnimatedEvent.ANSWER_START_ANIM.getId())
+                    boolean success = AnimationHandler.onServerIAnimatedEvent(message);
+                    if (success && message.event != EnumIAnimatedEvent.ANSWER_START_ANIM.getId())
                         CraftStudioApi.NETWORK.sendTo(new ClientIAnimatedEventMessage(message), player);
                 }
             });
-            
-            return null;
+
+            return true;
         }
 
         @Override
-        public Entity getEntityByUUID(MessageContext ctx, long most, long least) {
+        public Entity getEntityByUUID(Supplier<NetworkEvent.Context> ctx, long most, long least) {
             UUID uuid = new UUID(most, least);
-            for (Entity e : ctx.getServerHandler().player.world.loadedEntityList)
+            for (Entity e : ctx.get().getSender().level.loadedEntityList)
                 if (e.getPersistentID().equals(uuid))
                     return e;
             return null;
         }
 
         @Override
-        public TileEntity getTileEntityByPos(MessageContext ctx, int x, int y, int z) {
+        public BlockEntity getTileEntityByPos(Supplier<NetworkEvent.Context> ctx, int x, int y, int z) {
             BlockPos pos = new BlockPos(x, y, z);
-            return ctx.getServerHandler().player.world.getTileEntity(pos);
+            return ctx.get().getSender().level.getBlockEntity(pos);
         }
     }
 }

@@ -1,13 +1,10 @@
 package com.leviathanstudio.craftstudio.client.animation;
 
+import com.leviathanstudio.craftstudio.common.animation.InfoChannel;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import com.leviathanstudio.craftstudio.common.animation.InfoChannel;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * A InfoChannel that hold keyframes to animate a model.
@@ -16,7 +13,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  *
  * @author Timmypote
  */
-@SideOnly(Side.CLIENT)
 public class ClientChannel extends InfoChannel
 {
     /** KeyFrames. Key is the position of that keyFrame in the frames list. */

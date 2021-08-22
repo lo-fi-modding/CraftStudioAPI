@@ -1,22 +1,18 @@
 package com.leviathanstudio.craftstudio.client.animation;
 
-import java.util.Map.Entry;
-
-import javax.vecmath.Vector3f;
-
 import com.leviathanstudio.craftstudio.CraftStudioApi;
 import com.leviathanstudio.craftstudio.client.exception.CSResourceNotRegisteredException;
 import com.leviathanstudio.craftstudio.client.json.CSReadedAnim;
 import com.leviathanstudio.craftstudio.client.json.CSReadedAnimBlock;
 import com.leviathanstudio.craftstudio.client.json.CSReadedAnimBlock.ReadedKeyFrame;
-import com.leviathanstudio.craftstudio.client.registry.RegistryHandler;
 import com.leviathanstudio.craftstudio.client.json.CSReadedModel;
 import com.leviathanstudio.craftstudio.client.json.CSReadedModelBlock;
+import com.leviathanstudio.craftstudio.client.registry.RegistryHandler;
 import com.leviathanstudio.craftstudio.client.util.MathHelper;
+import com.mojang.math.Vector3f;
+import net.minecraft.resources.ResourceLocation;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import java.util.Map.Entry;
 
 /**
  * Animation Channel for CraftStudio imported animation.
@@ -25,7 +21,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  *
  * @author Timmypote
  */
-@SideOnly(Side.CLIENT)
 public class CSAnimChannel extends ClientChannel
 {
     /** The registered animation it represent */
@@ -37,9 +32,9 @@ public class CSAnimChannel extends ClientChannel
      * Create a channel with the same name as the animation. Use the 60 fps by
      * default.
      *
-     * @param animNameIn
+     * @param animIn
      *            The name of the animation in the registry.
-     * @param modelNameIn
+     * @param modelIn
      *            The name of the model bind to this animation in the registry.
      * @param looped
      *            If the animation is looped or not.
@@ -53,11 +48,9 @@ public class CSAnimChannel extends ClientChannel
     /**
      * Create a channel.
      *
-     * @param animNameIn
+     * @param animIn
      *            The name of the animation in the registry.
-     * @param name
-     *            The name of the channel
-     * @param modelNameIn
+     * @param modelIn
      *            The name of the model bind to this animation in the registry.
      * @param fps
      *            Keyframes per second of the animation.
@@ -68,16 +61,16 @@ public class CSAnimChannel extends ClientChannel
      */
     public CSAnimChannel(ResourceLocation animIn, ResourceLocation modelIn, float fps, boolean looped) throws CSResourceNotRegisteredException {
         super(animIn.toString(), false);
-        this.rAnim = RegistryHandler.animationRegistry.getObject(animIn);
+        this.rAnim = RegistryHandler.animationRegistry.get(animIn);
         if (this.rAnim == null)
             throw new CSResourceNotRegisteredException(animIn.toString());
-        this.rModel = RegistryHandler.modelRegistry.getObject(modelIn);
+        this.rModel = RegistryHandler.modelRegistry.get(modelIn);
         if (this.rModel == null)
             throw new CSResourceNotRegisteredException(modelIn.toString());
         if (!this.rModel.isAnimable()) {
-            CraftStudioApi.getLogger().warn("You are trying to animate the model \"" + modelIn.toString() + "\"");
-            CraftStudioApi.getLogger().warn("But it contains at least two blocks with the name \"" + this.rModel.whyUnAnimable() + "\"");
-            CraftStudioApi.getLogger().warn("There could be weird result with your animation");
+            CraftStudioApi.LOGGER.warn("You are trying to animate the model \"{}\"", modelIn.toString());
+            CraftStudioApi.LOGGER.warn("But it contains at least two blocks with the name \"{}\"", this.rModel.whyUnAnimable());
+            CraftStudioApi.LOGGER.warn("There could be weird result with your animation");
         }
         this.fps = fps;
         this.totalFrames = this.rAnim.getDuration();
@@ -110,28 +103,28 @@ public class CSAnimChannel extends ClientChannel
                     keyFrame = this.getKeyFrames().get(entry.getKey());
                     rKeyFrame = entry.getValue();
                     if (rKeyFrame.position != null) {
-                        vector = new Vector3f(rKeyFrame.position);
+                        vector = new Vector3f(rKeyFrame.position.x(), rKeyFrame.position.y(), rKeyFrame.position.z());
                         vector.add(mBlock.getRotationPoint());
                         keyFrame.modelRenderersTranslations.put(block.getName(), vector);
                         if (lastTK < entry.getKey())
                             lastTK = entry.getKey();
                     }
                     if (rKeyFrame.rotation != null) {
-                        vector = new Vector3f(rKeyFrame.rotation);
+                        vector = new Vector3f(rKeyFrame.rotation.x(), rKeyFrame.rotation.y(), rKeyFrame.rotation.z());
                         vector.add(mBlock.getRotation());
                         keyFrame.modelRenderersRotations.put(block.getName(), MathHelper.quatFromEuler(vector));
                         if (lastRK < entry.getKey())
                             lastRK = entry.getKey();
                     }
                     if (rKeyFrame.offset != null) {
-                        vector = new Vector3f(rKeyFrame.offset);
+                        vector = new Vector3f(rKeyFrame.offset.x(), rKeyFrame.offset.y(), rKeyFrame.offset.z());
                         vector.add(mBlock.getOffset());
                         keyFrame.modelRenderersOffsets.put(block.getName(), vector);
                         if (lastOK < entry.getKey())
                             lastOK = entry.getKey();
                     }
                     if (rKeyFrame.stretching != null) {
-                        vector = new Vector3f(rKeyFrame.stretching);
+                        vector = new Vector3f(rKeyFrame.stretching.x(), rKeyFrame.stretching.y(), rKeyFrame.stretching.z());
                         vector.add(mBlock.getStretch());
                         keyFrame.modelRenderersStretchs.put(block.getName(), vector);
                         if (lastSK < entry.getKey())
@@ -139,7 +132,7 @@ public class CSAnimChannel extends ClientChannel
                     }
                 }
             else
-                System.out.println("The block " + block.getName() + " doesn't exist in model " + this.rModel.getName() + " !");
+                CraftStudioApi.LOGGER.error("The block {} doesn't exist in model {} !", block.getName(), this.rModel.getName());
             if (this.rAnim.isHoldLastK()) {
                 if (lastTK != 0)
                     this.getKeyFrames().get(this.totalFrames).modelRenderersTranslations.put(block.getName(),

@@ -1,20 +1,19 @@
 package com.leviathanstudio.craftstudio.common.animation;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.leviathanstudio.craftstudio.common.network.CSNetworkHelper;
 import com.leviathanstudio.craftstudio.common.network.EnumIAnimatedEvent;
 import com.leviathanstudio.craftstudio.common.network.IAnimatedEventMessage;
+import net.minecraft.resources.ResourceLocation;
 
-import net.minecraft.util.ResourceLocation;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An object that hold the informations about its animated objects and all their
  * animations. It also start/stop/update the animations.
- * 
+ *
  * @since 0.3.0
- * 
+ *
  * @author Timmypote
  * @author ZeAmateis
  *
@@ -50,8 +49,6 @@ public abstract class AnimationHandler<T extends IAnimated>
      *            The id of your mod
      * @param animNameIn
      *            The name of the animation you want to add
-     * @param modelNameIn
-     *            The name of the parent model of your animation
      * @param customChannelIn
      *            Your custom channel for hard coded animations, (ex: lookAt)
      */
@@ -77,7 +74,7 @@ public abstract class AnimationHandler<T extends IAnimated>
 
     /**
      * Start an animation on client side.
-     * 
+     *
      * @param res
      *            The animation to start.
      * @param startingFrame
@@ -95,7 +92,7 @@ public abstract class AnimationHandler<T extends IAnimated>
      * using with "hold last keyframe" animations or long animations. In those
      * cases, prefer using {@link #startAnimation(String, float, IAnimated)} and
      * a custom network updating system.
-     * 
+     *
      * @param res
      *            The animation to start.
      * @param startingFrame
@@ -116,7 +113,7 @@ public abstract class AnimationHandler<T extends IAnimated>
 
     /**
      * Start an animation on this client only. Do nothing on server.
-     * 
+     *
      * @param res
      *            The animation to start.
      * @param startingFrame
@@ -130,7 +127,7 @@ public abstract class AnimationHandler<T extends IAnimated>
     /**
      * Initialize an animation on the server and wait for a
      * {@link #serverStartAnimation(String, float, IAnimated)}.
-     * 
+     *
      * @param res
      *            The animation to initialize.
      * @param startingFrame
@@ -143,7 +140,7 @@ public abstract class AnimationHandler<T extends IAnimated>
 
     /**
      * Start an initialized animation on the server.
-     * 
+     *
      * @param res
      *            The animation to start.
      * @param endingFrame
@@ -161,7 +158,7 @@ public abstract class AnimationHandler<T extends IAnimated>
 
     /**
      * Stop an animation across the network.
-     * 
+     *
      * @param res
      *            The animation to stop.
      * @param animatedElement
@@ -179,7 +176,7 @@ public abstract class AnimationHandler<T extends IAnimated>
 
     /**
      * Stop an animation on this client only.
-     * 
+     *
      * @param res
      *            The animation to stop.
      * @param animatedElement
@@ -190,7 +187,7 @@ public abstract class AnimationHandler<T extends IAnimated>
 
     /**
      * Stop an animation on the server only.
-     * 
+     *
      * @param res
      *            The animation to stop.
      * @param animatedElement
@@ -206,7 +203,7 @@ public abstract class AnimationHandler<T extends IAnimated>
 
     /**
      * Stop an animation and directly start another across the network.
-     * 
+     *
      * @param animToStop
      *            The animation to stop.
      * @param animToStart
@@ -230,7 +227,7 @@ public abstract class AnimationHandler<T extends IAnimated>
     /**
      * Stop an animation and directly start another on this client. Same as
      * doing clientStopAnimation(); clientStartAnimation();
-     * 
+     *
      * @param animToStop
      *            The animation to stop.
      * @param animToStart
@@ -249,7 +246,7 @@ public abstract class AnimationHandler<T extends IAnimated>
 
     /**
      * Stop an animation and directly initialize another on the server.
-     * 
+     *
      * @param animToStop
      *            The animation to stop.
      * @param animToStart
@@ -268,7 +265,7 @@ public abstract class AnimationHandler<T extends IAnimated>
 
     /**
      * Update the animation. Should be done every ticks.
-     * 
+     *
      * @param animatedElement
      *            The animated object.
      */
@@ -276,7 +273,7 @@ public abstract class AnimationHandler<T extends IAnimated>
 
     /**
      * Check if an animation is active for an IAnimated.
-     * 
+     *
      * @param name
      *            The name of the animation to check.
      * @param animatedElement
@@ -299,7 +296,7 @@ public abstract class AnimationHandler<T extends IAnimated>
 
     /**
      * Update the tick timer of the animation or stop it if it should.
-     * 
+     *
      * @param channel
      *            The animation to update.
      * @param animatedElement
@@ -311,7 +308,7 @@ public abstract class AnimationHandler<T extends IAnimated>
 
     /**
      * Get an animation name from its id. Used for network messages.
-     * 
+     *
      * @param id
      *            The animation id.
      * @return The name of the animation, null if the id doesn't exist.
@@ -322,7 +319,7 @@ public abstract class AnimationHandler<T extends IAnimated>
 
     /**
      * Get the id of an animation from its name. Used for network messages.
-     * 
+     *
      * @param name
      *            The animation name.
      * @return The id of the animation, -1 if the animation doesn't exist.
@@ -333,7 +330,7 @@ public abstract class AnimationHandler<T extends IAnimated>
 
     /**
      * Method called when a network message is received in the client.
-     * 
+     *
      * @param message
      *            The message.
      * @return True, if the message was correctly processed and a response
@@ -356,7 +353,7 @@ public abstract class AnimationHandler<T extends IAnimated>
 
     /**
      * Methods called when a network message is received on the server.
-     * 
+     *
      * @param message
      *            The message.
      * @return True, if the message was correctly processed and should be send
@@ -383,9 +380,9 @@ public abstract class AnimationHandler<T extends IAnimated>
 
     /**
      * A class that hold ticks and frames informations about an animation.
-     * 
+     *
      * @since 0.3.0
-     * 
+     *
      * @author Timmypote
      */
     public static class AnimInfo
@@ -416,7 +413,7 @@ public abstract class AnimationHandler<T extends IAnimated>
 
     /**
      * Start an animation on this client only. Do nothing on server.
-     * 
+     *
      * @param modid
      *            The ID of your mod.
      * @param animationName
@@ -474,7 +471,7 @@ public abstract class AnimationHandler<T extends IAnimated>
 
     /**
      * Stop an animation on this client only.
-     * 
+     *
      * @param modid
      *            The ID of your mod.
      * @param animationName
@@ -498,7 +495,7 @@ public abstract class AnimationHandler<T extends IAnimated>
 
     /**
      * Stop an animation across the network.
-     * 
+     *
      * @param modid
      *            The ID of your mod.
      * @param animationName
@@ -526,7 +523,7 @@ public abstract class AnimationHandler<T extends IAnimated>
      * See
      * {@link #stopStartAnimation(String, String, String, String, float, IAnimated)}.<br>
      * modid1 and modid2 are set to the value of modid.
-     * 
+     *
      * @param modid
      *            The ID of your mod.
      */
@@ -537,7 +534,7 @@ public abstract class AnimationHandler<T extends IAnimated>
     /**
      * Stop an animation and directly start another on this client. Same as
      * doing clientStopAnimation(); clientStartAnimation();
-     * 
+     *
      * @param modid1
      *            The ID of the mod of the animation you want to stop.
      * @param animToStop
@@ -579,7 +576,7 @@ public abstract class AnimationHandler<T extends IAnimated>
      * See
      * {@link #networkStopStartAnimation(String, String, String, String, float, IAnimated, boolean)}.<br>
      * modid1 and modid2 are set to the value of modid.
-     * 
+     *
      * @param modid
      *            The ID of your mod.
      */
@@ -590,7 +587,7 @@ public abstract class AnimationHandler<T extends IAnimated>
 
     /**
      * Stop an animation and directly start another across the network.
-     * 
+     *
      * @param modid1
      *            The ID of the mod of the animation you want to stop.
      * @param animToStop
@@ -614,7 +611,7 @@ public abstract class AnimationHandler<T extends IAnimated>
 
     /**
      * Check if an animation is active for an IAnimated.
-     * 
+     *
      * @param modid
      *            The ID of your mod
      * @param animationName

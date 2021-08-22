@@ -3,20 +3,24 @@ package com.leviathanstudio.craftstudio.common.animation.simpleImpl;
 import com.leviathanstudio.craftstudio.CraftStudioApi;
 import com.leviathanstudio.craftstudio.common.animation.AnimationHandler;
 import com.leviathanstudio.craftstudio.common.animation.IAnimated;
-
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.ITickable;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * An abstract class that represent a animated TileEntity. You should extends it
  * and not create your own, or be careful to implement all the methods of this
  * class.
- * 
+ *
  * @since 0.3.0
- * 
+ *
  * @author Timmypote
  */
-public abstract class AnimatedTileEntity extends TileEntity implements IAnimated, ITickable
+public abstract class AnimatedTileEntity extends BlockEntity implements IAnimated, ITickable
 {
     /** The animation handler of this type of tile entity. */
     // It should be different for every entity class, unless child classes have
@@ -30,8 +34,8 @@ public abstract class AnimatedTileEntity extends TileEntity implements IAnimated
     }
 
     /** The constructor of the tile entity. */
-    public AnimatedTileEntity() {
-        super();
+    public AnimatedTileEntity(final BlockEntityType<?> type, final BlockPos pos, final BlockState state) {
+        super(type, pos, state);
     }
 
     // You must call super.update() at the beginning of your update() method,
@@ -48,28 +52,28 @@ public abstract class AnimatedTileEntity extends TileEntity implements IAnimated
     }
 
     @Override
-    public int getDimension() {
-        return this.world.provider.getDimension();
+    public ResourceKey<Level> getDimension() {
+        return this.level.dimension();
     }
 
     @Override
     public double getX() {
-        return this.pos.getX();
+        return this.getBlockPos().getX();
     }
 
     @Override
     public double getY() {
-        return this.pos.getY();
+        return this.getBlockPos().getY();
     }
 
     @Override
     public double getZ() {
-        return this.pos.getZ();
+        return this.getBlockPos().getZ();
     }
 
     @Override
     public boolean isWorldRemote() {
-        return this.world.isRemote;
+        return this.level.isClientSide;
     }
 
     // Here to prevent bugs on the integrated server.
@@ -77,9 +81,9 @@ public abstract class AnimatedTileEntity extends TileEntity implements IAnimated
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + this.pos.getX();
-        result = prime * result + this.pos.getY();
-        result = prime * result + this.pos.getZ();
+        result = prime * result + this.getBlockPos().getX();
+        result = prime * result + this.getBlockPos().getY();
+        result = prime * result + this.getBlockPos().getZ();
         return result;
     }
 
@@ -93,11 +97,11 @@ public abstract class AnimatedTileEntity extends TileEntity implements IAnimated
         if (this.getClass() != obj.getClass())
             return false;
         AnimatedTileEntity other = (AnimatedTileEntity) obj;
-        if (this.pos.getX() != other.pos.getX())
+        if (this.getBlockPos().getX() != other.getBlockPos().getX())
             return false;
-        if (this.pos.getY() != other.pos.getY())
+        if (this.getBlockPos().getY() != other.getBlockPos().getY())
             return false;
-        if (this.pos.getZ() != other.pos.getZ())
+        if (this.getBlockPos().getZ() != other.getBlockPos().getZ())
             return false;
         return true;
     }

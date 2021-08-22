@@ -1,21 +1,17 @@
 package com.leviathanstudio.craftstudio.client.json;
 
+import com.mojang.math.Vector3f;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.vecmath.Vector3f;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 /**
  * Class that store information relative to a block in a model.
- * 
+ *
  * @since 0.3.0
  *
  * @author Timmypote
  */
-@SideOnly(Side.CLIENT)
 public class CSReadedModelBlock
 {
     private String                   name;

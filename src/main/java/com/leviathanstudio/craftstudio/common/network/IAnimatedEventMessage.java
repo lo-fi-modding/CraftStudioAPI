@@ -1,27 +1,26 @@
 package com.leviathanstudio.craftstudio.common.network;
 
-import java.util.UUID;
-
 import com.leviathanstudio.craftstudio.CraftStudioApi;
 import com.leviathanstudio.craftstudio.common.animation.IAnimated;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
-import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.Entity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import java.util.UUID;
+import java.util.function.Supplier;
 
 /**
  * Base class for
  * {@link com.leviathanstudio.craftstudio.common.animation.IAnimated IAnimated}
  * event messages.
- * 
+ *
  * @since 0.3.0
- * 
+ *
  * @author Timmypote
  */
-public class IAnimatedEventMessage implements IMessage
+public class IAnimatedEventMessage
 {
     /** The id of the event. See for more info {@link EnumIAnimatedEvent}. */
     public short     event;
@@ -69,74 +68,74 @@ public class IAnimatedEventMessage implements IMessage
         this.event = eventObj.event;
     }
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
+    public static <T extends IAnimatedEventMessage> T fromBytes(final T packet, FriendlyByteBuf buf) {
         short actualEvent = buf.readShort();
         if (actualEvent < 0 || actualEvent >= 2 * EnumIAnimatedEvent.ID_COUNT) {
-            this.event = -1;
-            CraftStudioApi.getLogger().error("Networking error : invalid packet.");
-            return;
+            packet.event = -1;
+            CraftStudioApi.LOGGER.error("Networking error : invalid packet.");
+            return packet;
         }
         else if (actualEvent < EnumIAnimatedEvent.ID_COUNT) {
-            this.most = buf.readLong();
-            this.least = buf.readLong();
-            this.event = actualEvent;
-            this.hasEntity = true;
+            packet.most = buf.readLong();
+            packet.least = buf.readLong();
+            packet.event = actualEvent;
+            packet.hasEntity = true;
         }
         else {
-            this.x = buf.readInt();
-            this.y = buf.readInt();
-            this.z = buf.readInt();
-            this.event = (short) (actualEvent - EnumIAnimatedEvent.ID_COUNT);
-            this.hasEntity = false;
+            packet.x = buf.readInt();
+            packet.y = buf.readInt();
+            packet.z = buf.readInt();
+            packet.event = (short) (actualEvent - EnumIAnimatedEvent.ID_COUNT);
+            packet.hasEntity = false;
         }
-        this.animId = buf.readShort();
-        if (this.event != 2)
-            this.keyframeInfo = buf.readFloat();
-        if (this.event > 2)
-            this.optAnimId = buf.readShort();
+        packet.animId = buf.readShort();
+        if (packet.event != 2)
+            packet.keyframeInfo = buf.readFloat();
+        if (packet.event > 2)
+            packet.optAnimId = buf.readShort();
+
+        return packet;
     }
 
-    @Override
-    public void toBytes(ByteBuf buf) {
-        if (this.event < 0 || this.event >= EnumIAnimatedEvent.ID_COUNT) {
+    public static void toBytes(final IAnimatedEventMessage packet, FriendlyByteBuf buf) {
+        if (packet.event < 0 || packet.event >= EnumIAnimatedEvent.ID_COUNT) {
             buf.writeShort(-1);
-            CraftStudioApi.getLogger().error("Unsuported event id " + this.event + " for network message.");
+            CraftStudioApi.LOGGER.error("Unsupported event id {} for network message.", packet.event);
             return;
         }
-        if (this.animated instanceof Entity) {
-            Entity e = (Entity) this.animated;
-            buf.writeShort(this.event);
-            UUID uuid = e.getUniqueID();
+        if (packet.animated instanceof Entity) {
+            Entity e = (Entity) packet.animated;
+            buf.writeShort(packet.event);
+            UUID uuid = e.getUUID();
             buf.writeLong(uuid.getMostSignificantBits());
             buf.writeLong(uuid.getLeastSignificantBits());
         }
-        else if (this.animated instanceof TileEntity) {
-            TileEntity te = (TileEntity) this.animated;
-            buf.writeShort(this.event + EnumIAnimatedEvent.ID_COUNT);
-            BlockPos pos = te.getPos();
+        else if (packet.animated instanceof BlockEntity) {
+            BlockEntity te = (BlockEntity) packet.animated;
+            buf.writeShort(packet.event + EnumIAnimatedEvent.ID_COUNT);
+            BlockPos pos = te.getBlockPos();
             buf.writeInt(pos.getX());
             buf.writeInt(pos.getY());
             buf.writeInt(pos.getZ());
         }
         else {
             buf.writeShort(-1);
-            CraftStudioApi.getLogger().error("Unsuported class " + this.animated.getClass().getSimpleName() + " for network message.");
-            CraftStudioApi.getLogger().error("You are trying to animate an other class than Entity or TileEntity.");
+            CraftStudioApi.LOGGER.error("Unsupported class {} for network message.", packet.animated.getClass().getSimpleName());
+            CraftStudioApi.LOGGER.error("You are trying to animate an other class than Entity or TileEntity.");
             return;
         }
-        buf.writeShort(this.animId);
-        if (this.event != EnumIAnimatedEvent.STOP_ANIM.getId())
-            buf.writeFloat(this.keyframeInfo);
-        if (this.event == EnumIAnimatedEvent.STOP_START_ANIM.getId())
-            buf.writeShort(this.optAnimId);
+        buf.writeShort(packet.animId);
+        if (packet.event != EnumIAnimatedEvent.STOP_ANIM.getId())
+            buf.writeFloat(packet.keyframeInfo);
+        if (packet.event == EnumIAnimatedEvent.STOP_START_ANIM.getId())
+            buf.writeShort(packet.optAnimId);
     }
 
     /**
-     * Base class for the messages handler.
-     * 
+     * Base class for the message handler.
+     *
      * @since 0.3.0
-     * 
+     *
      * @author Timmypote
      */
     public static abstract class IAnimatedEventHandler
@@ -144,7 +143,7 @@ public class IAnimatedEventMessage implements IMessage
 
         /**
          * Extract the Entity or TileEntity when a message is received.
-         * 
+         *
          * @param message
          *            The message received.
          * @param ctx
@@ -152,19 +151,19 @@ public class IAnimatedEventMessage implements IMessage
          * @return True, if the Entity/TileEntity was successfully extracted.
          *         False, otherwise.
          */
-        public boolean onMessage(IAnimatedEventMessage message, MessageContext ctx) {
+        public boolean onMessage(IAnimatedEventMessage message, Supplier<NetworkEvent.Context> ctx) {
             if (message.hasEntity) {
                 Entity e = this.getEntityByUUID(ctx, message.most, message.least);
                 if (!(e instanceof IAnimated)) {
-                    CraftStudioApi.getLogger().debug("Networking error : invalid entity.");
+                    CraftStudioApi.LOGGER.debug("Networking error : invalid entity.");
                     return false;
                 }
                 message.animated = (IAnimated) e;
             }
             else {
-                TileEntity te = this.getTileEntityByPos(ctx, message.x, message.y, message.z);
+                BlockEntity te = this.getTileEntityByPos(ctx, message.x, message.y, message.z);
                 if (!(te instanceof IAnimated)) {
-                    CraftStudioApi.getLogger().debug("Networking error : invalid tile entity.");
+                    CraftStudioApi.LOGGER.debug("Networking error : invalid tile entity.");
                     return false;
                 }
                 message.animated = (IAnimated) te;
@@ -174,20 +173,20 @@ public class IAnimatedEventMessage implements IMessage
 
         /**
          * Get an entity by its UUID.
-         * 
+         *
          * @param ctx
          *            The context of the message received.
          * @param most
-         *            The most significants bits of the UUID.
+         *            The most significant bits of the UUID.
          * @param least
-         *            The least significants bits of the UUID.
+         *            The least significant bits of the UUID.
          * @return The Entity, null if it couldn't be found.
          */
-        public abstract Entity getEntityByUUID(MessageContext ctx, long most, long least);
+        public abstract Entity getEntityByUUID(Supplier<NetworkEvent.Context> ctx, long most, long least);
 
         /**
          * Get a TileEntity by its position.
-         * 
+         *
          * @param ctx
          *            The context of the message received.
          * @param x
@@ -198,6 +197,6 @@ public class IAnimatedEventMessage implements IMessage
          *            The position on the z axis.
          * @return The TileEntity, null if it couldn't be found.
          */
-        public abstract TileEntity getTileEntityByPos(MessageContext ctx, int x, int y, int z);
+        public abstract BlockEntity getTileEntityByPos(Supplier<NetworkEvent.Context> ctx, int x, int y, int z);
     }
 }

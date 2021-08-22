@@ -1,23 +1,18 @@
 package com.leviathanstudio.craftstudio.client.json;
 
+import com.leviathanstudio.craftstudio.client.util.EnumFrameType;
+import com.mojang.math.Vector3f;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.vecmath.Vector3f;
-
-import com.leviathanstudio.craftstudio.client.util.EnumFrameType;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 /**
  * Class that store information relative to an animated block.</br>
- * 
+ *
  * @since 0.3.0
  *
  * @author Timmypote
  */
-@SideOnly(Side.CLIENT)
 public class CSReadedAnimBlock
 {
     private String                       name;
@@ -57,9 +52,9 @@ public class CSReadedAnimBlock
 
     /**
      * Class used to store informations relative to keyframes.
-     * 
+     *
      * @since 0.3.0
-     * 
+     *
      * @author Timmypote
      */
     public class ReadedKeyFrame

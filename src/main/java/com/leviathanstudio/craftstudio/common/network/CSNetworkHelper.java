@@ -1,16 +1,15 @@
 package com.leviathanstudio.craftstudio.common.network;
 
 import com.leviathanstudio.craftstudio.CraftStudioApi;
-
-import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 /**
  * A helper class to easily send
  * {@link com.leviathanstudio.craftstudio.common.animation.IAnimated IAnimated}
  * event on client and server.
- * 
+ *
  * @since 0.3.0
- * 
+ *
  * @author Timmypote
  */
 public class CSNetworkHelper
@@ -24,7 +23,7 @@ public class CSNetworkHelper
 
     /**
      * Send the given message through the network.
-     * 
+     *
      * @param message
      *            The message to send.
      */
@@ -35,7 +34,6 @@ public class CSNetworkHelper
         else
             // If we are on server, we send a client message to the clients in
             // range.
-            CraftStudioApi.NETWORK.sendToAllAround(new ClientIAnimatedEventMessage(message), new TargetPoint(message.animated.getDimension(),
-                    message.animated.getX(), message.animated.getY(), message.animated.getZ(), CSNetworkHelper.EVENT_RANGE));
+            CraftStudioApi.NETWORK.send(PacketDistributor.DIMENSION.with(() -> message.animated.getDimension()), new ClientIAnimatedEventMessage(message));
     }
 }

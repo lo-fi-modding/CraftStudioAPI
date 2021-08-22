@@ -1,17 +1,13 @@
 package com.leviathanstudio.craftstudio.client.exception;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 /**
  * Exception raised when the program try to call a resource that isn't
  * registered.
- * 
+ *
  * @since 0.3.0
  *
  * @author Timmypote
  */
-@SideOnly(Side.CLIENT)
 public class CSResourceNotRegisteredException extends RuntimeException
 {
     private static final long serialVersionUID = -3495512420502365486L;

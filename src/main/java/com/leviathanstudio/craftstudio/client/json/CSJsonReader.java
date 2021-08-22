@@ -1,14 +1,5 @@
 package com.leviathanstudio.craftstudio.client.json;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.InputStreamReader;
-import java.util.Map.Entry;
-
-import javax.vecmath.Vector3f;
-
-import org.apache.commons.io.Charsets;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -17,24 +8,27 @@ import com.leviathanstudio.craftstudio.CraftStudioApi;
 import com.leviathanstudio.craftstudio.client.exception.CSMalformedJsonException;
 import com.leviathanstudio.craftstudio.client.exception.CSResourceNotFoundException;
 import com.leviathanstudio.craftstudio.client.util.EnumFrameType;
-
+import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.IResource;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
+import org.apache.commons.io.Charsets;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
+import java.util.Map.Entry;
 
 /**
  * Class used to read json and extract a {@link CSReadedModel} or a
  * {@link CSReadedAnim}.
- * 
+ *
  * @since 0.3.0
  *
  * @author Timmypote
  * @author ZeAmateis
  * @author Phenix246
  */
-@SideOnly(Side.CLIENT)
 public class CSJsonReader
 {
     /** The JsonObject that is the root of the file */
@@ -48,7 +42,7 @@ public class CSJsonReader
      * @param resourceIn
      *            Location of the <i>model.csjsmodel</i> or the
      *            <i>anim.csjsmodelanim</i>.
-     * @throws CraftStudioModelNotFound
+     * @throws CSResourceNotFoundException
      *             If the files doesn't exist.
      *
      * @see #readModel()
@@ -57,12 +51,12 @@ public class CSJsonReader
     public CSJsonReader(ResourceLocation resourceIn) throws CSResourceNotFoundException {
         JsonParser jsonParser = new JsonParser();
         BufferedReader reader = null;
-        IResource iResource = null;
+        Resource iResource = null;
         StringBuilder strBuilder = new StringBuilder();
         this.ress = resourceIn.toString();
 
         try {
-            iResource = Minecraft.getMinecraft().getResourceManager().getResource(resourceIn);
+            iResource = Minecraft.getInstance().getResourceManager().getResource(resourceIn);
             reader = new BufferedReader(new InputStreamReader(iResource.getInputStream(), Charsets.UTF_8));
             String s;
             while ((s = reader.readLine()) != null)
@@ -262,7 +256,7 @@ public class CSJsonReader
             try {
                 readAnimBlock(entry, block);
             } catch (Exception e) {
-                CraftStudioApi.getLogger().error(e.getMessage());
+                CraftStudioApi.LOGGER.error(e.getMessage());
                 throw new CSMalformedJsonException(block.getName() != null ? block.getName() : "a block without name", this.ress);
             }
         }

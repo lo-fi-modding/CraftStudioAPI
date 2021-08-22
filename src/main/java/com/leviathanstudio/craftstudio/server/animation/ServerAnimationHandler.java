@@ -1,33 +1,29 @@
 package com.leviathanstudio.craftstudio.server.animation;
 
+import com.leviathanstudio.craftstudio.common.animation.AnimationHandler;
+import com.leviathanstudio.craftstudio.common.animation.Channel;
+import com.leviathanstudio.craftstudio.common.animation.CustomChannel;
+import com.leviathanstudio.craftstudio.common.animation.IAnimated;
+import net.minecraft.resources.ResourceLocation;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.WeakHashMap;
 
-import com.leviathanstudio.craftstudio.common.animation.AnimationHandler;
-import com.leviathanstudio.craftstudio.common.animation.Channel;
-import com.leviathanstudio.craftstudio.common.animation.CustomChannel;
-import com.leviathanstudio.craftstudio.common.animation.IAnimated;
-
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 /**
  * An object that hold the informations about its animated objects and all their
  * animations. It also start/stop/update the animations. This is the server side
  * AnimationHandler.
- * 
+ *
  * @since 0.3.0
- * 
+ *
  * @author Timmypote
  *
  * @param <T>
  *            The class of the animated object.
  */
-@SideOnly(Side.SERVER)
 public class ServerAnimationHandler<T extends IAnimated> extends AnimationHandler<T>
 {
     /** Map with all the animations. */

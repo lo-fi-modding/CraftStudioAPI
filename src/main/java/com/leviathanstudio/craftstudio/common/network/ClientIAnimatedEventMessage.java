@@ -1,24 +1,24 @@
 package com.leviathanstudio.craftstudio.common.network;
 
-import java.util.UUID;
-
 import com.leviathanstudio.craftstudio.CraftStudioApi;
 import com.leviathanstudio.craftstudio.client.animation.ClientAnimationHandler;
 import com.leviathanstudio.craftstudio.common.animation.IAnimated;
 import com.leviathanstudio.craftstudio.common.animation.InfoChannel;
-
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
+
+import java.util.UUID;
+import java.util.function.Supplier;
 
 /**
  * Message to send an IAnimated event to the client.
- * 
+ *
  * @since 0.3.0
- * 
+ *
  * @author Timmypote
  */
 public class ClientIAnimatedEventMessage extends IAnimatedEventMessage
@@ -46,22 +46,25 @@ public class ClientIAnimatedEventMessage extends IAnimatedEventMessage
         super(eventObj);
     }
 
+    public static ClientIAnimatedEventMessage fromBytes(final FriendlyByteBuf buf) {
+        return IAnimatedEventMessage.fromBytes(new ClientIAnimatedEventMessage(), buf);
+    }
+
     /**
      * Handler for IAnimated event messages send to the client.
-     * 
+     *
      * @since 0.3.0
-     * 
+     *
      * @author Timmypote
      */
     public static class ClientIAnimatedEventHandler extends IAnimatedEventHandler
-            implements IMessageHandler<ClientIAnimatedEventMessage, ServerIAnimatedEventMessage>
     {
         @Override
-        public ServerIAnimatedEventMessage onMessage(ClientIAnimatedEventMessage message, MessageContext ctx) {
-            Minecraft.getMinecraft().addScheduledTask(() -> {
+        public boolean onMessage(IAnimatedEventMessage message, Supplier<NetworkEvent.Context> ctx) {
+            ctx.get().enqueueWork(() -> {
                 if (super.onMessage(message, ctx)) {
-                    boolean succes = message.animated.getAnimationHandler().onClientIAnimatedEvent(message);
-                    if (succes && message.animated.getAnimationHandler() instanceof ClientAnimationHandler
+                    boolean success = message.animated.getAnimationHandler().onClientIAnimatedEvent(message);
+                    if (success && message.animated.getAnimationHandler() instanceof ClientAnimationHandler
                             && (message.event == EnumIAnimatedEvent.START_ANIM.getId() || message.event == EnumIAnimatedEvent.STOP_START_ANIM.getId())) {
                         ClientAnimationHandler hand = (ClientAnimationHandler) message.animated.getAnimationHandler();
                         String animName = hand.getAnimNameFromId(message.animId);
@@ -70,23 +73,23 @@ public class ClientIAnimatedEventMessage extends IAnimatedEventMessage
                     }
                 }
             });
-            
-            return null;
+
+            return true;
         }
 
         @Override
-        public Entity getEntityByUUID(MessageContext ctx, long most, long least) {
+        public Entity getEntityByUUID(Supplier<NetworkEvent.Context> ctx, long most, long least) {
             UUID uuid = new UUID(most, least);
-            for (Entity e : Minecraft.getMinecraft().world.loadedEntityList)
+            for (Entity e : Minecraft.getInstance().level.loadedEntityList)
                 if (e.getPersistentID().equals(uuid))
                     return e;
             return null;
         }
 
         @Override
-        public TileEntity getTileEntityByPos(MessageContext ctx, int x, int y, int z) {
+        public BlockEntity getTileEntityByPos(Supplier<NetworkEvent.Context> ctx, int x, int y, int z) {
             BlockPos pos = new BlockPos(x, y, z);
-            return Minecraft.getMinecraft().world.getTileEntity(pos);
+            return Minecraft.getInstance().level.getBlockEntity(pos);
         }
     }
 }

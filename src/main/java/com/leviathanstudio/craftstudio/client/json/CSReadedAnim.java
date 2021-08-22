@@ -1,24 +1,20 @@
 package com.leviathanstudio.craftstudio.client.json;
 
+import com.leviathanstudio.craftstudio.client.json.CSReadedAnimBlock.ReadedKeyFrame;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.leviathanstudio.craftstudio.client.json.CSReadedAnimBlock.ReadedKeyFrame;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 /**
  * Class that store the informations relative to an animation.
- * 
+ *
  * @since 0.3.0
  *
  * @author Timmypote
  */
-@SideOnly(Side.CLIENT)
 public class CSReadedAnim
 {
     private String                  name;

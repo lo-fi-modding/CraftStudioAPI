@@ -1,17 +1,13 @@
 package com.leviathanstudio.craftstudio.client.exception;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 /**
  * Exception raised when there is an error during json reading caused by a
  * malformed json.
- * 
+ *
  * @since 0.3.0
  *
  * @author Timmypote
  */
-@SideOnly(Side.CLIENT)
 public class CSMalformedJsonException extends Exception
 {
     private static final long serialVersionUID = -3495512445212088386L;
