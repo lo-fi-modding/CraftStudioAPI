@@ -1,13 +1,13 @@
 package com.leviathanstudio.craftstudio.common.network;
 
 import com.leviathanstudio.craftstudio.CraftStudioApi;
-
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.dimension.DimensionType;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.PacketDistributor;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.fmllegacy.network.NetworkRegistry;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
+import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
 
 /**
  * A helper class to easily send
@@ -61,7 +61,7 @@ public class CSNetworkHelper {
         CHANNEL.sendToServer(packetIn);
     }
 
-    public static void sendPacketTo(AnimatedEventMessage packetIn, ServerPlayerEntity player) {
+    public static void sendPacketTo(AnimatedEventMessage packetIn, ServerPlayer player) {
         CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), packetIn);
     }
 
@@ -69,7 +69,7 @@ public class CSNetworkHelper {
         CHANNEL.send(PacketDistributor.ALL.noArg(), packetIn);
     }
 
-    public static void sendPacketToDimension(AnimatedEventMessage packetIn, DimensionType dimension) {
+    public static void sendPacketToDimension(AnimatedEventMessage packetIn, ResourceKey<Level> dimension) {
         CHANNEL.send(PacketDistributor.DIMENSION.with(() -> dimension), packetIn);
     }
 

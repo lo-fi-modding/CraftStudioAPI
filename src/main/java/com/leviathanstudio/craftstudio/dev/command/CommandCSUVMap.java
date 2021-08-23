@@ -1,16 +1,15 @@
 package com.leviathanstudio.craftstudio.dev.command;
 
 import com.mojang.brigadier.CommandDispatcher;
-
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 /**
  * Command to generate a UV map for a specified model.
- * 
+ *
  * @since 0.3.0
- * 
+ *
  * @author Timmypote
  */
 @OnlyIn(Dist.CLIENT)
@@ -20,13 +19,13 @@ public class CommandCSUVMap {
     private static String usage     = "/csuvmap model";
     private static int    permLevel = 0;
 
-    public static void register(CommandDispatcher<CommandSource> dispatcher) {
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
     	//getListOfStringsMatchingLastWord(RegistryHandler.modelRegistry.keySet());
     	//EntityArgument.entities()
     	dispatcher.register(Commands.literal(name)
-    			.requires(src -> src.hasPermissionLevel(permLevel))
+    			.requires(src -> src.hasPermission(permLevel))
     			);
-    	
+
     }
 
    /* public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {

@@ -4,11 +4,11 @@ import com.leviathanstudio.craftstudio.CraftStudioApi;
 import com.leviathanstudio.craftstudio.common.animation.AnimationHandler;
 import com.leviathanstudio.craftstudio.common.animation.simpleImpl.AnimatedEntity;
 import com.leviathanstudio.craftstudio.test.common.ModTest;
-
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Hand;
-import net.minecraft.world.World;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 
 public class EntityTest3 extends AnimatedEntity
 {
@@ -20,7 +20,7 @@ public class EntityTest3 extends AnimatedEntity
         EntityTest3.animHandler.addAnim(ModTest.MODID, "idle", "dragon_brun", true);
     }
 
-    public EntityTest3(EntityType<? extends AnimatedEntity> type, World par1World) {
+    public EntityTest3(EntityType<? extends AnimatedEntity> type, Level par1World) {
         super(type, par1World);
     }
 
@@ -31,15 +31,15 @@ public class EntityTest3 extends AnimatedEntity
     }
 
     @Override
-    public boolean processInteract(PlayerEntity player, Hand hand) {
+    public InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (!this.fly)
             this.fly = true;
-        return true;
+        return InteractionResult.SUCCESS;
     }
 
     @Override
-    public void livingTick() {
-        super.livingTick();
+    public void aiStep() {
+        super.aiStep();
 
         if (!this.getAnimationHandler().isAnimationActive(ModTest.MODID, "fly", this) && this.fly)
             this.getAnimationHandler().networkStartAnimation(ModTest.MODID, "fly", this);

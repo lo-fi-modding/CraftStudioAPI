@@ -1,10 +1,10 @@
 package com.leviathanstudio.craftstudio.client.json;
 
 import com.leviathanstudio.craftstudio.client.util.EnumFrameType;
+import com.mojang.math.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import javax.vecmath.Vector3f;
 import java.util.HashMap;
 import java.util.Map;
 

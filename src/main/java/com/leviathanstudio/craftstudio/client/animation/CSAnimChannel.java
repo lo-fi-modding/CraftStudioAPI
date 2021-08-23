@@ -9,11 +9,11 @@ import com.leviathanstudio.craftstudio.client.json.CSReadedModel;
 import com.leviathanstudio.craftstudio.client.json.CSReadedModelBlock;
 import com.leviathanstudio.craftstudio.client.registry.RegistryHandler;
 import com.leviathanstudio.craftstudio.client.util.MathHelper;
-import net.minecraft.util.ResourceLocation;
+import com.mojang.math.Vector3f;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import javax.vecmath.Vector3f;
 import java.util.Map.Entry;
 
 /**
@@ -101,28 +101,28 @@ public class CSAnimChannel extends ClientChannel {
                     keyFrame = this.getKeyFrames().get(entry.getKey());
                     rKeyFrame = entry.getValue();
                     if (rKeyFrame.position != null) {
-                        vector = new Vector3f(rKeyFrame.position);
-                        vector.add(mBlock.getRotationPoint());
+                        vector = new Vector3f(rKeyFrame.position.x(), rKeyFrame.position.y(), rKeyFrame.position.z());
+                        vector.add(mBlock.getRotationPoint().x(), mBlock.getRotationPoint().y(), mBlock.getRotationPoint().z());
                         keyFrame.modelRenderersTranslations.put(block.getName(), vector);
                         if (lastTK < entry.getKey())
                             lastTK = entry.getKey();
                     }
                     if (rKeyFrame.rotation != null) {
-                        vector = new Vector3f(rKeyFrame.rotation);
+                        vector = new Vector3f(rKeyFrame.rotation.x(), rKeyFrame.rotation.y(), rKeyFrame.rotation.z());
                         vector.add(mBlock.getRotation());
                         keyFrame.modelRenderersRotations.put(block.getName(), MathHelper.quatFromEuler(vector));
                         if (lastRK < entry.getKey())
                             lastRK = entry.getKey();
                     }
                     if (rKeyFrame.offset != null) {
-                        vector = new Vector3f(rKeyFrame.offset);
+                        vector = new Vector3f(rKeyFrame.offset.x(), rKeyFrame.offset.y(), rKeyFrame.offset.z());
                         vector.add(mBlock.getOffset());
                         keyFrame.modelRenderersOffsets.put(block.getName(), vector);
                         if (lastOK < entry.getKey())
                             lastOK = entry.getKey();
                     }
                     if (rKeyFrame.stretching != null) {
-                        vector = new Vector3f(rKeyFrame.stretching);
+                        vector = new Vector3f(rKeyFrame.stretching.x(), rKeyFrame.stretching.y(), rKeyFrame.stretching.z());
                         vector.add(mBlock.getStretch());
                         keyFrame.modelRenderersStretchs.put(block.getName(), vector);
                         if (lastSK < entry.getKey())

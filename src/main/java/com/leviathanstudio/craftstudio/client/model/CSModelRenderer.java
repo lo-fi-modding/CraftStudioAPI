@@ -2,6 +2,9 @@ package com.leviathanstudio.craftstudio.client.model;
 
 import com.leviathanstudio.craftstudio.client.util.MathHelper;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.Tessellator;
@@ -59,7 +62,7 @@ public class CSModelRenderer extends RendererModel {
     private float defaultRotationPointY;
     private float defaultRotationPointZ;
     private Matrix4f defaultRotationMatrix = new Matrix4f();
-    private Quat4f defaultRotationAsQuaternion;
+    private Quaternion defaultRotationAsQuaternion;
     private float defaultOffsetX = 0;
     private float defaultOffsetY = 0;
     private float defaultOffsetZ = 0;

@@ -4,9 +4,8 @@ import com.leviathanstudio.craftstudio.CraftStudioApi;
 import com.leviathanstudio.craftstudio.common.animation.AnimationHandler;
 import com.leviathanstudio.craftstudio.common.animation.simpleImpl.AnimatedEntity;
 import com.leviathanstudio.craftstudio.test.common.ModTest;
-
-import net.minecraft.entity.EntityType;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.Level;
 
 public class EntityTest4 extends AnimatedEntity
 {
@@ -16,7 +15,7 @@ public class EntityTest4 extends AnimatedEntity
         EntityTest4.animHandler.addAnim(ModTest.MODID, "rotation", "craftstudio_api_test2", true);
     }
 
-    public EntityTest4(EntityType<? extends AnimatedEntity> type, World par1World) {
+    public EntityTest4(EntityType<? extends AnimatedEntity> type, Level par1World) {
         super(type, par1World);
     }
 
@@ -27,8 +26,8 @@ public class EntityTest4 extends AnimatedEntity
     }
 
     @Override
-    public void livingTick() {
-        super.livingTick();
+    public void aiStep() {
+        super.aiStep();
 
         if (this.isWorldRemote() && !this.getAnimationHandler().isAnimationActive(ModTest.MODID, "rotation", this))
             this.getAnimationHandler().startAnimation(ModTest.MODID, "rotation", this);

@@ -1,26 +1,25 @@
 package com.leviathanstudio.craftstudio.test.common;
 
+import com.leviathanstudio.craftstudio.test.common.block.BlockTest;
 import com.leviathanstudio.craftstudio.test.common.entity.EntityTest;
 import com.leviathanstudio.craftstudio.test.common.entity.EntityTest2;
-import com.leviathanstudio.craftstudio.test.common.tileEntity.TileEntityTest;
-import com.leviathanstudio.craftstudio.test.common.block.BlockTest;
 import com.leviathanstudio.craftstudio.test.common.entity.EntityTest3;
 import com.leviathanstudio.craftstudio.test.common.entity.EntityTest4;
 import com.leviathanstudio.craftstudio.test.common.item.ItemTest;
+import com.leviathanstudio.craftstudio.test.common.tileEntity.TileEntityTest;
 import com.mojang.datafixers.DataFixUtils;
 import com.mojang.datafixers.types.Type;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.EntityClassification;
-import net.minecraft.entity.EntityType;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.SharedConstants;
-import net.minecraft.util.datafix.DataFixesManager;
-import net.minecraft.util.datafix.TypeReferences;
+import net.minecraft.SharedConstants;
+import net.minecraft.util.datafix.DataFixers;
+import net.minecraft.util.datafix.fixes.References;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.material.Material;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -28,8 +27,8 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 @EventBusSubscriber(modid = ModTest.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class RegistryHandler
 {
-    public static final Block block_test = new BlockTest(Block.Properties.create(Material.ROCK));
-    public static final TileEntityType<?> tile_test = register("tileTest", TileEntityType.Builder.create(TileEntityTest::new, block_test));
+    public static final Block block_test = new BlockTest(Block.Properties.of(Material.STONE));
+    public static final BlockEntityType<?> tile_test = register("tileTest", BlockEntityType.Builder.of(TileEntityTest::new, block_test));
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
@@ -37,7 +36,7 @@ public class RegistryHandler
     }
 
     @SubscribeEvent
-    public static void registerTiles(RegistryEvent.Register<TileEntityType<?>> event) {
+    public static void registerTiles(RegistryEvent.Register<BlockEntityType<?>> event) {
     	event.getRegistry().register(tile_test.setRegistryName("tile_test"));
     }
 
@@ -49,10 +48,10 @@ public class RegistryHandler
 
     @SubscribeEvent
     public static void registerEntities(RegistryEvent.Register<EntityType<?>> event) {
-    	EntityType<EntityTest> entityTest = EntityType.Builder.<EntityTest>create(EntityTest::new, EntityClassification.MISC).build("entityTest");
-    	EntityType<EntityTest2> entityTest2 = EntityType.Builder.<EntityTest2>create(EntityTest2::new, EntityClassification.MISC).build("entityTest2");
-    	EntityType<EntityTest3> entityTest3 = EntityType.Builder.<EntityTest3>create(EntityTest3::new, EntityClassification.MISC).build("entityTest3");
-    	EntityType<EntityTest4> entityTest4 = EntityType.Builder.<EntityTest4>create(EntityTest4::new, EntityClassification.MISC).build("entityTest4");
+    	EntityType<EntityTest> entityTest = EntityType.Builder.of(EntityTest::new, MobCategory.MISC).build("entityTest");
+    	EntityType<EntityTest2> entityTest2 = EntityType.Builder.of(EntityTest2::new, MobCategory.MISC).build("entityTest2");
+    	EntityType<EntityTest3> entityTest3 = EntityType.Builder.of(EntityTest3::new, MobCategory.MISC).build("entityTest3");
+    	EntityType<EntityTest4> entityTest4 = EntityType.Builder.of(EntityTest4::new, MobCategory.MISC).build("entityTest4");
 
 
     	event.getRegistry().register(entityTest.setRegistryName("test_1"));
@@ -64,19 +63,19 @@ public class RegistryHandler
 
     }
 
-    private static <T extends TileEntity> TileEntityType<T> register(String id, TileEntityType.Builder<T> builder) {
+    private static <T extends BlockEntity> BlockEntityType<T> register(String id, BlockEntityType.Builder<T> builder) {
         Type<?> type = null;
 
         try {
-            type = DataFixesManager.getDataFixer().getSchema(DataFixUtils.makeKey(1631)).getChoiceType(TypeReferences.BLOCK_ENTITY, ModTest.MODID + ":" + id);
+            type = DataFixers.getDataFixer().getSchema(DataFixUtils.makeKey(1631)).getChoiceType(References.BLOCK_ENTITY, ModTest.MODID + ":" + id);
         }
         catch(IllegalArgumentException e) {
-            if(SharedConstants.developmentMode) {
+            if(SharedConstants.IS_RUNNING_IN_IDE) {
                 throw e;
             }
         }
 
-        TileEntityType<T> tileEntityType = builder.build(type);
+        BlockEntityType<T> tileEntityType = builder.build(type);
 
         return tileEntityType;
     }

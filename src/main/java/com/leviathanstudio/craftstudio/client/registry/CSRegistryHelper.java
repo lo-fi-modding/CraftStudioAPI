@@ -6,12 +6,9 @@ import com.leviathanstudio.craftstudio.client.exception.CSResourceNotFoundExcept
 import com.leviathanstudio.craftstudio.client.json.CSJsonReader;
 import com.leviathanstudio.craftstudio.client.util.EnumRenderType;
 import com.leviathanstudio.craftstudio.client.util.EnumResourceType;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Class containing useful methods to register models and animations.

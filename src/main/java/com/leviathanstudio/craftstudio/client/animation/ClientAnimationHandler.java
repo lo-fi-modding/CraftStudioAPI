@@ -2,18 +2,26 @@ package com.leviathanstudio.craftstudio.client.animation;
 
 import com.leviathanstudio.craftstudio.CraftStudioApi;
 import com.leviathanstudio.craftstudio.client.model.CSModelRenderer;
-import com.leviathanstudio.craftstudio.common.animation.*;
+import com.leviathanstudio.craftstudio.common.animation.AnimationHandler;
+import com.leviathanstudio.craftstudio.common.animation.Channel;
+import com.leviathanstudio.craftstudio.common.animation.CustomChannel;
+import com.leviathanstudio.craftstudio.common.animation.IAnimated;
+import com.leviathanstudio.craftstudio.common.animation.InfoChannel;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.model.RendererModel;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Quat4f;
-import javax.vecmath.Vector3f;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.WeakHashMap;
 
 /**
  * An object that hold the informations about its animated objects and all their
@@ -44,7 +52,7 @@ public class ClientAnimationHandler<T extends IAnimated> extends AnimationHandle
      */
     public static boolean isGamePaused() {
         Minecraft MC = Minecraft.getInstance();
-        return MC.isSingleplayer() && MC.currentScreen != null && MC.currentScreen.isPauseScreen() && !MC.getIntegratedServer().getPublic();
+        return MC.isLocalServer() && MC.screen != null && MC.screen.isPauseScreen() && !MC.getSingleplayerServer().isPublished();
     }
 
     /**
@@ -108,14 +116,14 @@ public class ClientAnimationHandler<T extends IAnimated> extends AnimationHandle
                         SLERPProgress = 1F;
 
                     if (prevRotationKeyFramePosition == 0 && prevRotationKeyFrame == null && !(nextRotationKeyFramePosition == 0)) {
-                        Quat4f currentQuat = new Quat4f();
+                        Quaternion currentQuat = new Quaternion();
                         currentQuat.interpolate(block.getDefaultRotationAsQuaternion(), nextRotationKeyFrame.modelRenderersRotations.get(boxName),
                                 SLERPProgress);
                         Matrix4f mat = block.getRotationMatrix();
                         mat.set(currentQuat);
                         mat.transpose();
                     } else if (nextRotationKeyFramePosition != 0) {
-                        Quat4f currentQuat = new Quat4f();
+                        Quaternion currentQuat = new Quaternion();
                         currentQuat.interpolate(prevRotationKeyFrame.modelRenderersRotations.get(boxName),
                                 nextRotationKeyFrame.modelRenderersRotations.get(boxName), SLERPProgress);
                         Matrix4f mat = block.getRotationMatrix();
@@ -140,15 +148,15 @@ public class ClientAnimationHandler<T extends IAnimated> extends AnimationHandle
                     if (prevTranslationsKeyFramePosition == 0 && prevTranslationKeyFrame == null && !(nextTranslationsKeyFramePosition == 0)) {
                         Vector3f startPosition = block.getPositionAsVector();
                         Vector3f endPosition = nextTranslationKeyFrame.modelRenderersTranslations.get(boxName);
-                        Vector3f currentPosition = new Vector3f(startPosition);
+                        Vector3f currentPosition = new Vector3f(startPosition.x(), startPosition.y(), startPosition.z());
                         currentPosition.interpolate(endPosition, LERPProgress);
-                        block.setRotationPoint(currentPosition.x, currentPosition.y, currentPosition.z);
+                        block.setRotationPoint(currentPosition.x(), currentPosition.y(), currentPosition.z());
                     } else if (nextTranslationsKeyFramePosition != 0) {
                         Vector3f startPosition = prevTranslationKeyFrame.modelRenderersTranslations.get(boxName);
                         Vector3f endPosition = nextTranslationKeyFrame.modelRenderersTranslations.get(boxName);
-                        Vector3f currentPosition = new Vector3f(startPosition);
+                        Vector3f currentPosition = new Vector3f(startPosition.x(), startPosition.y(), startPosition.z());
                         currentPosition.interpolate(endPosition, LERPProgress);
-                        block.setRotationPoint(currentPosition.x, currentPosition.y, currentPosition.z);
+                        block.setRotationPoint(currentPosition.x(), currentPosition.y(), currentPosition.z());
                     }
 
                     // Offsets
@@ -165,15 +173,15 @@ public class ClientAnimationHandler<T extends IAnimated> extends AnimationHandle
                     if (prevOffsetKeyFramePosition == 0 && prevOffsetKeyFrame == null && !(nextOffsetKeyFramePosition == 0)) {
                         Vector3f startPosition = block.getOffsetAsVector();
                         Vector3f endPosition = nextOffsetKeyFrame.modelRenderersOffsets.get(boxName);
-                        Vector3f currentPosition = new Vector3f(startPosition);
+                        Vector3f currentPosition = new Vector3f(startPosition.x(), startPosition.y(), startPosition.z());
                         currentPosition.interpolate(endPosition, OffProgress);
-                        block.setOffset(currentPosition.x, currentPosition.y, currentPosition.z);
+                        block.setOffset(currentPosition.x(), currentPosition.y(), currentPosition.z());
                     } else if (nextOffsetKeyFramePosition != 0) {
                         Vector3f startPosition = prevOffsetKeyFrame.modelRenderersOffsets.get(boxName);
                         Vector3f endPosition = nextOffsetKeyFrame.modelRenderersOffsets.get(boxName);
-                        Vector3f currentPosition = new Vector3f(startPosition);
+                        Vector3f currentPosition = new Vector3f(startPosition.x(), startPosition.y(), startPosition.z());
                         currentPosition.interpolate(endPosition, OffProgress);
-                        block.setOffset(currentPosition.x, currentPosition.y, currentPosition.z);
+                        block.setOffset(currentPosition.x(), currentPosition.y(), currentPosition.z());
                     }
 
                     // Stretch
@@ -190,15 +198,15 @@ public class ClientAnimationHandler<T extends IAnimated> extends AnimationHandle
                     if (prevStretchKeyFramePosition == 0 && prevStretchKeyFrame == null && !(nextStretchKeyFramePosition == 0)) {
                         Vector3f startPosition = block.getStretchAsVector();
                         Vector3f endPosition = nextStretchKeyFrame.modelRenderersStretchs.get(boxName);
-                        Vector3f currentPosition = new Vector3f(startPosition);
+                        Vector3f currentPosition = new Vector3f(startPosition.x(), startPosition.y(), startPosition.z());
                         currentPosition.interpolate(endPosition, strProgress);
-                        block.setStretch(currentPosition.x, currentPosition.y, currentPosition.z);
+                        block.setStretch(currentPosition.x(), currentPosition.y(), currentPosition.z());
                     } else if (nextStretchKeyFramePosition != 0) {
                         Vector3f startPosition = prevStretchKeyFrame.modelRenderersStretchs.get(boxName);
                         Vector3f endPosition = nextStretchKeyFrame.modelRenderersStretchs.get(boxName);
-                        Vector3f currentPosition = new Vector3f(startPosition);
+                        Vector3f currentPosition = new Vector3f(startPosition.x(), startPosition.y(), startPosition.z());
                         currentPosition.interpolate(endPosition, strProgress);
-                        block.setStretch(currentPosition.x, currentPosition.y, currentPosition.z);
+                        block.setStretch(currentPosition.x(), currentPosition.y(), currentPosition.z());
                     }
 
                 } else if (animInfo.getKey() instanceof CustomChannel)

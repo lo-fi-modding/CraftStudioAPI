@@ -1,10 +1,10 @@
 package com.leviathanstudio.craftstudio.client.animation;
 
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import javax.vecmath.Quat4f;
-import javax.vecmath.Vector3f;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,7 +20,7 @@ public class KeyFrame implements Cloneable {
     /**
      * Map of quaternions for block rotation
      */
-    protected Map<String, Quat4f> modelRenderersRotations = new HashMap<>();
+    protected Map<String, Quaternion> modelRenderersRotations = new HashMap<>();
     /**
      * Map of vector for block translation
      */

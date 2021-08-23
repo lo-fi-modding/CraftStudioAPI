@@ -16,13 +16,13 @@ group = 'com.leviathanstudio' // http://maven.apache.org/guides/mini/guide-namin
 archivesBaseName = 'CraftStudioAPI'
 
 compileJava.options.encoding = 'UTF-8'
-java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+java.toolchain.languageVersion = JavaLanguageVersion.of(16)
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 
 minecraft {
 
-    mappings channel: 'snapshot', version: '20190719-1.14.3'
+    mappings channel: 'official', version: '1.17.1'
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
     // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -77,7 +77,7 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.14.4-28.2.23'
+    minecraft 'net.minecraftforge:forge:1.17.1-37.0.43'
 }
 
 repositories {

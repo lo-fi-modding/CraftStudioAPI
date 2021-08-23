@@ -3,10 +3,10 @@ package com.leviathanstudio.craftstudio.common.animation.simpleImpl;
 import com.leviathanstudio.craftstudio.CraftStudioApi;
 import com.leviathanstudio.craftstudio.common.animation.AnimationHandler;
 import com.leviathanstudio.craftstudio.common.animation.IAnimated;
-import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.level.Level;
 
 /**
  * An abstract class that represent an animated entity. You can extends it or
@@ -15,7 +15,7 @@ import net.minecraft.world.dimension.DimensionType;
  * @author Timmypote
  * @since 0.3.0
  */
-public abstract class AnimatedEntity extends CreatureEntity implements IAnimated {
+public abstract class AnimatedEntity extends PathfinderMob implements IAnimated {
     /**
      * The animation handler of this type of entity.
      */
@@ -32,7 +32,7 @@ public abstract class AnimatedEntity extends CreatureEntity implements IAnimated
     /**
      * The constructor of the entity.
      */
-    public AnimatedEntity(EntityType<? extends CreatureEntity> entityTypeIn, World worldIn) {
+    public AnimatedEntity(EntityType<? extends PathfinderMob> entityTypeIn, Level worldIn) {
         super(entityTypeIn, worldIn);
     }
 
@@ -44,8 +44,8 @@ public abstract class AnimatedEntity extends CreatureEntity implements IAnimated
      * use this to react to sunlight and start to burn.
      */
     @Override
-    public void livingTick() {
-        super.livingTick();
+    public void aiStep() {
+        super.aiStep();
         this.getAnimationHandler().animationsUpdate(this);
     }
 
@@ -56,27 +56,12 @@ public abstract class AnimatedEntity extends CreatureEntity implements IAnimated
     }
 
     @Override
-    public DimensionType getDimension() {
-        return this.dimension;
-    }
-
-    @Override
-    public double getX() {
-        return this.posX;
-    }
-
-    @Override
-    public double getY() {
-        return this.posY;
-    }
-
-    @Override
-    public double getZ() {
-        return this.posZ;
+    public ResourceKey<Level> getDimension() {
+        return this.level.dimension();
     }
 
     @Override
     public boolean isWorldRemote() {
-        return this.world.isRemote;
+        return this.level.isClientSide();
     }
 }

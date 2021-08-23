@@ -1,9 +1,9 @@
 package com.leviathanstudio.craftstudio.client.json;
 
+import com.mojang.math.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import javax.vecmath.Vector3f;
 import java.util.ArrayList;
 import java.util.List;
 

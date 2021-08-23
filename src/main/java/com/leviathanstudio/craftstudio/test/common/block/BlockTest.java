@@ -1,12 +1,11 @@
 package com.leviathanstudio.craftstudio.test.common.block;
 
 import com.leviathanstudio.craftstudio.test.common.tileEntity.TileEntityTest;
-
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class BlockTest extends Block
 {
@@ -32,7 +31,7 @@ public class BlockTest extends Block
 
 
 	@Override
-	public TileEntity createTileEntity(BlockState state, IBlockReader world) {
+	public BlockEntity createTileEntity(BlockState state, IBlockReader world) {
 		return new TileEntityTest();
 	}
 

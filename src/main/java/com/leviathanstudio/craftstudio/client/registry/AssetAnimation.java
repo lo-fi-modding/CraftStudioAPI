@@ -6,7 +6,7 @@ import com.leviathanstudio.craftstudio.client.exception.CSMalformedJsonException
 import com.leviathanstudio.craftstudio.client.exception.CSResourceNotFoundException;
 import com.leviathanstudio.craftstudio.client.json.CSJsonReader;
 import com.leviathanstudio.craftstudio.client.json.CSReadedAnim;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 

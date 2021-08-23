@@ -1,27 +1,16 @@
 package com.leviathanstudio.craftstudio;
 
-import com.leviathanstudio.craftstudio.client.registry.AssetAnimation;
-import com.leviathanstudio.craftstudio.client.registry.AssetModel;
-import com.leviathanstudio.craftstudio.client.registry.CSRegistryHelper;
-import com.leviathanstudio.craftstudio.client.registry.RegistryHandler;
 import com.leviathanstudio.craftstudio.common.animation.AnimationHandler;
 import com.leviathanstudio.craftstudio.common.animation.IAnimated;
 import com.leviathanstudio.craftstudio.proxy.CSClientProxy;
 import com.leviathanstudio.craftstudio.proxy.CSCommonProxy;
 import com.leviathanstudio.craftstudio.proxy.CSServerProxy;
-
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.RegistryBuilder;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -37,7 +26,7 @@ public class CraftStudioApi {
     public static final String API_ID = "craftstudioapi";
 
     private static final Logger LOGGER = LogManager.getLogger("CraftStudio");
-    private static CSCommonProxy proxy = DistExecutor.runForDist(() -> CSClientProxy::new, () -> CSServerProxy::new);
+    private static final CSCommonProxy proxy = DistExecutor.safeRunForDist(() -> CSClientProxy::new, () -> CSServerProxy::new);
 
     public CraftStudioApi() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
@@ -68,6 +57,6 @@ public class CraftStudioApi {
     public void commonSetup(FMLCommonSetupEvent event) {
         CraftStudioApi.proxy.commonSetup(event);
     }
-   
+
 
 }

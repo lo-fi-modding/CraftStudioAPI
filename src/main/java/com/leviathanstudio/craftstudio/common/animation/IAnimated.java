@@ -1,6 +1,7 @@
 package com.leviathanstudio.craftstudio.common.animation;
 
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
 
 /**
  * Implement object that must be animated with the api.
@@ -27,7 +28,7 @@ public interface IAnimated {
      *
      * @return The dimension of the object as a int.
      */
-    public DimensionType getDimension();
+    public ResourceKey<Level> getDimension();
 
     /**
      * Getter for the x coordinate.

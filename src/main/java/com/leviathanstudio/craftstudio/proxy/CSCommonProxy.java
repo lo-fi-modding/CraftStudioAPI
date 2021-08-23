@@ -24,6 +24,7 @@ public abstract class CSCommonProxy {
     //TODO Register packets
     public void commonSetup(FMLCommonSetupEvent event) {
     	CSNetworkHelper.CHANNEL.registerMessage(1, AnimatedEventMessage.class, AnimatedEventMessageUtil.ENCODER, AnimatedEventMessageUtil.DECODER, AnimatedEventMessageUtil.HANDLER);
+    	//TODO
         //CSNetworkHelper.CHANNEL.registerMessage(ClientIAnimatedEventHandler.class, ClientIAnimatedEventMessage.class, 0, Side.CLIENT);
         //CraftStudioApi.NETWORK.registerMessage(ServerIAnimatedEventHandler.class, ServerIAnimatedEventMessage.class, 1, Side.SERVER);
     }

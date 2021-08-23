@@ -4,18 +4,17 @@ import com.leviathanstudio.craftstudio.client.registry.CSRegistryHelper;
 import com.leviathanstudio.craftstudio.client.util.EnumRenderType;
 import com.leviathanstudio.craftstudio.client.util.EnumResourceType;
 import com.leviathanstudio.craftstudio.common.animation.simpleImpl.CSTileEntitySpecialRenderer;
-import com.leviathanstudio.craftstudio.test.common.entity.EntityTest;
-import com.leviathanstudio.craftstudio.test.common.entity.EntityTest2;
-import com.leviathanstudio.craftstudio.test.common.tileEntity.TileEntityTest;
 import com.leviathanstudio.craftstudio.test.client.entityRender.RenderTest;
 import com.leviathanstudio.craftstudio.test.client.entityRender.RenderTest2;
 import com.leviathanstudio.craftstudio.test.client.entityRender.RenderTest3;
 import com.leviathanstudio.craftstudio.test.client.entityRender.RenderTest4;
 import com.leviathanstudio.craftstudio.test.common.ModTest;
+import com.leviathanstudio.craftstudio.test.common.entity.EntityTest;
+import com.leviathanstudio.craftstudio.test.common.entity.EntityTest2;
 import com.leviathanstudio.craftstudio.test.common.entity.EntityTest3;
 import com.leviathanstudio.craftstudio.test.common.entity.EntityTest4;
-
-import net.minecraft.util.ResourceLocation;
+import com.leviathanstudio.craftstudio.test.common.tileEntity.TileEntityTest;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 

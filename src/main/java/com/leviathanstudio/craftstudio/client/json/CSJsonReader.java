@@ -8,14 +8,14 @@ import com.leviathanstudio.craftstudio.CraftStudioApi;
 import com.leviathanstudio.craftstudio.client.exception.CSMalformedJsonException;
 import com.leviathanstudio.craftstudio.client.exception.CSResourceNotFoundException;
 import com.leviathanstudio.craftstudio.client.util.EnumFrameType;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.IResource;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.io.Charsets;
 
-import javax.vecmath.Vector3f;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -54,7 +54,7 @@ public class CSJsonReader {
     public CSJsonReader(ResourceLocation resourceIn) throws CSResourceNotFoundException {
         JsonParser jsonParser = new JsonParser();
         BufferedReader reader = null;
-        IResource iResource = null;
+        Resource iResource = null;
         StringBuilder strBuilder = new StringBuilder();
         this.ress = resourceIn.toString();
 

@@ -1,20 +1,19 @@
 package com.leviathanstudio.craftstudio.dev.command;
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.mojang.brigadier.CommandDispatcher;
-
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Command to list all the models or animations.
- * 
+ *
  * @since 0.3.0
- * 
+ *
  * @author Timmypote
  */
 @OnlyIn(Dist.CLIENT)
@@ -26,9 +25,9 @@ public class CommandCSList
     private static int          permLevel = 0;
     private static List<String> autoC     = Arrays.<String> asList(new String[] { "models", "animations" });
 
-    public static void register(CommandDispatcher<CommandSource> dispatcher) {
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
     	dispatcher.register(Commands.literal(name)
-    			.requires(src -> src.hasPermissionLevel(permLevel)));
+    			.requires(src -> src.hasPermission(permLevel)));
 
     }
 

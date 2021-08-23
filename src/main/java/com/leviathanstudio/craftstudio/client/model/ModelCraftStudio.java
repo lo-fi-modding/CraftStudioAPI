@@ -6,13 +6,13 @@ import com.leviathanstudio.craftstudio.client.json.CSReadedModel;
 import com.leviathanstudio.craftstudio.client.json.CSReadedModelBlock;
 import com.leviathanstudio.craftstudio.client.registry.RegistryHandler;
 import com.leviathanstudio.craftstudio.common.animation.IAnimated;
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.PositionTextureVertex;
-import net.minecraft.entity.Entity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.SimpleRegistry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -104,7 +104,7 @@ public class ModelCraftStudio<T extends Entity> extends EntityModel<T> {
     }
 
     /**
-     * Generate CSModelRenderer from readed model block
+     * Generate CSModelRenderer from read model block
      */
     private CSModelRenderer generateCSModelRend(CSReadedModelBlock rBlock) {
         CSModelRenderer modelRend = new CSModelRenderer(this, rBlock.getName(), rBlock.getTexOffset()[0], rBlock.getTexOffset()[1]);
@@ -128,12 +128,12 @@ public class ModelCraftStudio<T extends Entity> extends EntityModel<T> {
     /**
      * Render function for an animated block<br>
      * Must be called in a
-     * {@link net.minecraft.client.renderer.tileentity.TileEntityRenderer#render
+     * {@link net.minecraft.client.renderer.blockentity.BlockEntityRenderer#render
      * renderTileEntityAt} method
      *
      * @param tileEntityIn The TileEntity who implements {@link IAnimated}
      */
-    public void render(TileEntity tileEntityIn) {
+    public void render(BlockEntity tileEntityIn) {
         float modelScale = 0.0625F;
         ClientAnimationHandler.performAnimationInModel(this.parentBlocks, (IAnimated) tileEntityIn);
         for (int i = 0; i < this.parentBlocks.size(); i++)
@@ -143,7 +143,7 @@ public class ModelCraftStudio<T extends Entity> extends EntityModel<T> {
     /**
      * Render function for a non-animated block<br>
      * Must be called in a
-     * {@link net.minecraft.client.renderer.tileentity.TileEntityRenderer#render
+     * {@link net.minecraft.client.renderer.blockentity.BlockEntityRenderer#render
      * renderTileEntityAt} method
      */
     public void render() {

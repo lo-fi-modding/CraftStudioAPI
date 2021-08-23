@@ -6,9 +6,9 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * Class used to perform custom animations. For example, using in game data.
- * 
+ *
  * @since 0.3.0
- * 
+ *
  * @author Timmypote
  */
 public abstract class CustomChannel extends InfoChannel
@@ -23,7 +23,7 @@ public abstract class CustomChannel extends InfoChannel
      * every tick while the animation is active. You should modifies the
      * rotation, translation, offset or/and scale of the part.
      *
-     * @param parts
+     * @param part
      *            The part that is animated.
      * @param animated
      *            The animated object.
