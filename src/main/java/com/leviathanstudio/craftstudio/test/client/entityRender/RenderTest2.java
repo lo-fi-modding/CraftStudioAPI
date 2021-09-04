@@ -7,7 +7,6 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fml.client.registry.IRenderFactory;
 
 public class RenderTest2<T extends EntityTest2> extends LivingEntityRenderer<T, ModelCraftStudio<T>>
 {
@@ -22,10 +21,10 @@ public class RenderTest2<T extends EntityTest2> extends LivingEntityRenderer<T, 
         return new ResourceLocation(ModTest.MODID, "textures/entity/peacock.png");
     }
 
-    public static class Factory<T extends EntityTest2> implements IRenderFactory<T>
+    public static class Factory<T extends EntityTest2> implements EntityRendererProvider<T>
     {
         @Override
-        public EntityRenderer<? super T> createRenderFor(EntityRendererProvider.Context manager) {
+        public EntityRenderer<T> create(EntityRendererProvider.Context manager) {
             return new RenderTest2<T>(manager);
         }
     }

@@ -3,10 +3,11 @@ package com.leviathanstudio.craftstudio.client.registry;
 import com.leviathanstudio.craftstudio.client.json.CSReadedAnim;
 import com.leviathanstudio.craftstudio.client.json.CSReadedModel;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.SimpleRegistry;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Class that handle registry for the CraftStudioApi.
@@ -16,13 +17,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  */
 @OnlyIn(Dist.CLIENT)
 public class RegistryHandler {
-    public static SimpleRegistry<CSReadedModel> modelRegistry;
-    public static SimpleRegistry<CSReadedAnim> animationRegistry;
-
-    static {
-    	modelRegistry = new SimpleRegistry<>();
-        animationRegistry = new SimpleRegistry<>();
-    }
+    public static final Map<ResourceLocation, CSReadedModel> modelRegistry = new HashMap<>();
+    public static final Map<ResourceLocation, CSReadedAnim> animationRegistry = new HashMap<>();
 
     /**
      * Register a CSReadedModel.
@@ -31,7 +27,7 @@ public class RegistryHandler {
      * @param model The model.
      */
     public static void register(ResourceLocation res, CSReadedModel model) {
-        modelRegistry.register(res, model);
+        modelRegistry.put(res, model);
     }
 
     /**
@@ -41,6 +37,6 @@ public class RegistryHandler {
      * @param anim The animation.
      */
     public static void register(ResourceLocation res, CSReadedAnim anim) {
-        animationRegistry.register(res, anim);
+        animationRegistry.put(res, anim);
     }
 }

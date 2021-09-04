@@ -9,18 +9,20 @@ import com.leviathanstudio.craftstudio.test.client.entityRender.RenderTest2;
 import com.leviathanstudio.craftstudio.test.client.entityRender.RenderTest3;
 import com.leviathanstudio.craftstudio.test.client.entityRender.RenderTest4;
 import com.leviathanstudio.craftstudio.test.common.ModTest;
-import com.leviathanstudio.craftstudio.test.common.entity.EntityTest;
-import com.leviathanstudio.craftstudio.test.common.entity.EntityTest2;
-import com.leviathanstudio.craftstudio.test.common.entity.EntityTest3;
-import com.leviathanstudio.craftstudio.test.common.entity.EntityTest4;
-import com.leviathanstudio.craftstudio.test.common.tileEntity.TileEntityTest;
+import com.leviathanstudio.craftstudio.test.common.RegistryHandler;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
-public class ClientProxy extends CommonProxy
+@Mod.EventBusSubscriber(modid = ModTest.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+public class ClientProxy
 {
-    public void registerCraftStudioAssets() {
+    @SubscribeEvent
+    public static void registerCraftStudioAssets(final FMLClientSetupEvent event) {
         CSRegistryHelper registry = new CSRegistryHelper(ModTest.MODID);
         registry.register(EnumResourceType.MODEL, EnumRenderType.BLOCK, "craftstudio_api_test2");
         registry.register(EnumResourceType.MODEL, EnumRenderType.BLOCK, "craftstudio_api_test");
@@ -37,17 +39,13 @@ public class ClientProxy extends CommonProxy
         registry.register(EnumResourceType.ANIM, EnumRenderType.ENTITY, "close_fan");
     }
 
-    @Override
-    public void registerEntityRender() {
-        RenderingRegistry.registerEntityRenderingHandler(EntityTest.class, RenderTest.FACTORY);
-        RenderingRegistry.registerEntityRenderingHandler(EntityTest2.class, RenderTest2.FACTORY);
-        RenderingRegistry.registerEntityRenderingHandler(EntityTest3.class, RenderTest3.FACTORY);
-        RenderingRegistry.registerEntityRenderingHandler(EntityTest4.class, RenderTest4.FACTORY);
-    }
+    @SubscribeEvent
+    public static void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(RegistryHandler.ENTITY_TEST_1, RenderTest.FACTORY);
+        event.registerEntityRenderer(RegistryHandler.ENTITY_TEST_2, RenderTest2.FACTORY);
+        event.registerEntityRenderer(RegistryHandler.ENTITY_TEST_3, RenderTest3.FACTORY);
+        event.registerEntityRenderer(RegistryHandler.ENTITY_TEST_4, RenderTest4.FACTORY);
 
-    @Override
-    public void bindTESR() {
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityTest.class, new CSTileEntitySpecialRenderer(ModTest.MODID, "craftstudio_api_test", 64,
-                32, new ResourceLocation(ModTest.MODID, "textures/entity/craftstudio_api_test.png")));
+        event.registerBlockEntityRenderer(RegistryHandler.tile_test, context -> new CSTileEntitySpecialRenderer<BlockEntity>(ModTest.MODID, "craftstudio_api_test", 64, 32, new ResourceLocation(ModTest.MODID, "textures/entity/craftstudio_api_test.png")));
     }
 }

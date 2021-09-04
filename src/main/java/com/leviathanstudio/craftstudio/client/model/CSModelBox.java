@@ -1,17 +1,16 @@
 package com.leviathanstudio.craftstudio.client.model;
 
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.entity.model.RendererModel;
-import net.minecraft.client.renderer.model.PositionTextureVertex;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.math.Vector3d;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.model.TexturedQuad;
-import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
- * Class used to render a box in a {@link RendererModel} or a
- * {@link RendererModel}.</br>
- * Partially based on {@link net.minecraft.client.renderer.model.ModelBox ModelBox}.
+ * Class used to render a box in a {@link ModelPart} or a
+ * {@link ModelPart}.</br>
+ * Partially based on {@link ModelPart.Cube ModelBox}.
  *
  * @author Timmypote
  * @since 0.3.0
@@ -22,28 +21,11 @@ public class CSModelBox {
     /**
      * An array of 6 TexturedQuads, one for each face of a cube.
      */
-    private final TexturedQuad[] quadList;
+    private final ModelPart.Polygon[] quadList;
     /**
      * The box name.
      **/
     public String boxName;
-
-    /**
-     * Create a textured rectangular box without textures mirror precision.
-     *
-     * @param renderer The (CS)RendererModel to which the box will be add.
-     * @param texU     The X coordinate of the texture.
-     * @param texV     The Y coordinate of the texture.
-     * @param x        The X coordinate of the starting point of the box.
-     * @param y        The Y coordinate of the starting point of the box.
-     * @param z        The Z coordinate of the starting point of the box.
-     * @param dx       The length of the box on the X axis.
-     * @param dy       The length of the box on the Y axis.
-     * @param dz       The length of the box on the Z axis.
-     */
-    public CSModelBox(RendererModel renderer, int texU, int texV, float x, float y, float z, float dx, float dy, float dz) {
-        this(renderer, texU, texV, x, y, z, dx, dy, dz, renderer.mirror);
-    }
 
     /**
      * Create a textured rectangular box.
@@ -57,65 +39,46 @@ public class CSModelBox {
      * @param dx       The length of the box on the X axis.
      * @param dy       The length of the box on the Y axis.
      * @param dz       The length of the box on the Z axis.
-     * @param mirror   True if the texture should be mirrored, False if it shouldn't.
      */
-    public CSModelBox(RendererModel renderer, int texU, int texV, float x, float y, float z, float dx, float dy, float dz, boolean mirror) {
-        this(renderer, getVerticesForRect(x, y, z, dx, dy, dz, mirror), getTextureUVsForRect(texU, texV, dx, dy, dz), mirror);
+    public CSModelBox(ModelPart renderer, int texU, int texV, float x, float y, float z, float dx, float dy, float dz) {
+        this(renderer, getVerticesForRect(x, y, z, dx, dy, dz), getTextureUVsForRect(texU, texV, dx, dy, dz));
     }
 
     /**
      * Create a box from PositionTextureVertex and texture it with textUVs
      * without textures mirror precision.<br>
-     * See {@link #setVertex(PositionTextureVertex[]) setVertex()} and
-     * {@link #setTexture(RendererModel, int[][]) setTexture()} for orders.
+     * See {@link #setVertex(ModelPart.Vertex[]) setVertex()} and
+     * {@link #setTexture(ModelPart, int[][]) setTexture()} for orders.
      *
      * @param renderer              The (CS)RendererModel to which the box will be add.
      * @param positionTextureVertex The 8 vertices used to create the box.
      * @param textUVs               The 6 pairs of points used to set the textures' UVs for each
      *                              faces.
      */
-    public CSModelBox(RendererModel renderer, PositionTextureVertex positionTextureVertex[], int[][] textUVs) {
-        this(renderer, positionTextureVertex, textUVs, renderer.mirror);
-    }
-
-    /**
-     * Create a box from PositionTextureVertex and texture it with textUVs.<br>
-     * See {@link #setVertex(PositionTextureVertex[]) setVertex()} and
-     * {@link #setTexture(RendererModel, int[][]) setTexture()} for orders.
-     *
-     * @param renderer              The (CS)RendererModel to which the box will be add.
-     * @param positionTextureVertex The 8 vertices used to create the box.
-     * @param textUVs               The 6 pairs of points used to set the textures' UVs for each
-     *                              faces.
-     * @param mirror                True if the texture should be mirrored, False if it shouldn't.
-     */
-    public CSModelBox(RendererModel renderer, PositionTextureVertex positionTextureVertex[], int[][] textUVs, boolean mirror) {
+    public CSModelBox(ModelPart renderer, ModelPart.Vertex positionTextureVertex[], int[][] textUVs) {
         this(positionTextureVertex);
         this.setTexture(renderer, textUVs);
         this.checkBlockForShadow();
-        if (mirror)
-            for (TexturedQuad texturedquad : this.quadList)
-                texturedquad.flipFace();
     }
 
     /**
      * Create a box from PositionTextureVertex.<br>
-     * See {@link #setVertex(PositionTextureVertex[]) setVertex()} for order.
+     * See {@link #setVertex(ModelPart.Vertex[]) setVertex()} for order.
      *
      * @param positionTextureVertex The 8 vertices used to create the box.
      */
-    public CSModelBox(PositionTextureVertex positionTextureVertex[]) {
+    public CSModelBox(ModelPart.Vertex positionTextureVertex[]) {
         this(6);
         this.setVertex(positionTextureVertex);
     }
 
     /**
-     * Just create a box with a list of {@link facesNumber} unset TexturedQuad.
+     * Just create a box with a list of facesNumber unset TexturedQuad.
      *
      * @param facesNumber The number of faces the box will have.
      */
     public CSModelBox(int facesNumber) {
-        this.quadList = new TexturedQuad[facesNumber];
+        this.quadList = new ModelPart.Polygon[facesNumber];
     }
 
     /**
@@ -127,30 +90,23 @@ public class CSModelBox {
      * @param dx     The length of the box on the X axis.
      * @param dy     The length of the box on the Y axis.
      * @param dz     The length of the box on the Z axis.
-     * @param mirror True if the texture should be mirrored, False if it shouldn't.
-     * @return A 8 long array of PositionTextureVertex that can be used to
+     * @return An 8 long array of PositionTextureVertex that can be used to
      * create a rectangular box.
      */
-    public static PositionTextureVertex[] getVerticesForRect(float x, float y, float z, float dx, float dy, float dz, boolean mirror) {
-        PositionTextureVertex[] positionTextureVertex = new PositionTextureVertex[8];
+    public static ModelPart.Vertex[] getVerticesForRect(float x, float y, float z, float dx, float dy, float dz) {
+      ModelPart.Vertex[] positionTextureVertex = new ModelPart.Vertex[8];
         float endX = x + dx;
         float endY = y + dy;
         float endZ = z + dz;
 
-        if (mirror) {
-            float buffer = endX;
-            endX = x;
-            x = buffer;
-        }
-
-        positionTextureVertex[0] = new PositionTextureVertex(x, y, z, 0.0F, 0.0F);
-        positionTextureVertex[1] = new PositionTextureVertex(endX, y, z, 0.0F, 0.0F);
-        positionTextureVertex[2] = new PositionTextureVertex(endX, endY, z, 0.0F, 0.0F);
-        positionTextureVertex[3] = new PositionTextureVertex(x, endY, z, 0.0F, 0.0F);
-        positionTextureVertex[4] = new PositionTextureVertex(x, y, endZ, 0.0F, 0.0F);
-        positionTextureVertex[5] = new PositionTextureVertex(endX, y, endZ, 0.0F, 0.0F);
-        positionTextureVertex[6] = new PositionTextureVertex(endX, endY, endZ, 0.0F, 0.0F);
-        positionTextureVertex[7] = new PositionTextureVertex(x, endY, endZ, 0.0F, 0.0F);
+        positionTextureVertex[0] = new ModelPart.Vertex(x, y, z, 0.0F, 0.0F);
+        positionTextureVertex[1] = new ModelPart.Vertex(endX, y, z, 0.0F, 0.0F);
+        positionTextureVertex[2] = new ModelPart.Vertex(endX, endY, z, 0.0F, 0.0F);
+        positionTextureVertex[3] = new ModelPart.Vertex(x, endY, z, 0.0F, 0.0F);
+        positionTextureVertex[4] = new ModelPart.Vertex(x, y, endZ, 0.0F, 0.0F);
+        positionTextureVertex[5] = new ModelPart.Vertex(endX, y, endZ, 0.0F, 0.0F);
+        positionTextureVertex[6] = new ModelPart.Vertex(endX, endY, endZ, 0.0F, 0.0F);
+        positionTextureVertex[7] = new ModelPart.Vertex(x, endY, endZ, 0.0F, 0.0F);
 
         return positionTextureVertex;
     }
@@ -180,7 +136,7 @@ public class CSModelBox {
 
     /**
      * Set the vertices of the box ! A
-     * {@link #setTexture(RendererModel, int[][]) setTexture()} is necessary
+     * {@link #setTexture(ModelPart, int[][]) setTexture()} is necessary
      * after that.<br>
      * <p>
      * Order of the vertices:<br>
@@ -195,19 +151,19 @@ public class CSModelBox {
      *
      * @param positionTextureVertex The 8 vertices that will replace the old ones.
      */
-    public void setVertex(PositionTextureVertex positionTextureVertex[]) {
+    public void setVertex(ModelPart.Vertex positionTextureVertex[]) {
         if (positionTextureVertex.length == 8) {
-            this.quadList[0] = new TexturedQuad(new PositionTextureVertex[]{positionTextureVertex[5], positionTextureVertex[1],
+            this.quadList[0] = new TexturedQuad(new ModelPart.Vertex[]{positionTextureVertex[5], positionTextureVertex[1],
                     positionTextureVertex[2], positionTextureVertex[6]});
-            this.quadList[1] = new TexturedQuad(new PositionTextureVertex[]{positionTextureVertex[0], positionTextureVertex[4],
+            this.quadList[1] = new TexturedQuad(new ModelPart.Vertex[]{positionTextureVertex[0], positionTextureVertex[4],
                     positionTextureVertex[7], positionTextureVertex[3]});
-            this.quadList[2] = new TexturedQuad(new PositionTextureVertex[]{positionTextureVertex[5], positionTextureVertex[4],
+            this.quadList[2] = new TexturedQuad(new ModelPart.Vertex[]{positionTextureVertex[5], positionTextureVertex[4],
                     positionTextureVertex[0], positionTextureVertex[1]});
-            this.quadList[3] = new TexturedQuad(new PositionTextureVertex[]{positionTextureVertex[2], positionTextureVertex[3],
+            this.quadList[3] = new TexturedQuad(new ModelPart.Vertex[]{positionTextureVertex[2], positionTextureVertex[3],
                     positionTextureVertex[7], positionTextureVertex[6]});
-            this.quadList[4] = new TexturedQuad(new PositionTextureVertex[]{positionTextureVertex[1], positionTextureVertex[0],
+            this.quadList[4] = new TexturedQuad(new ModelPart.Vertex[]{positionTextureVertex[1], positionTextureVertex[0],
                     positionTextureVertex[3], positionTextureVertex[2]});
-            this.quadList[5] = new TexturedQuad(new PositionTextureVertex[]{positionTextureVertex[4], positionTextureVertex[5],
+            this.quadList[5] = new TexturedQuad(new ModelPart.Vertex[]{positionTextureVertex[4], positionTextureVertex[5],
                     positionTextureVertex[6], positionTextureVertex[7]});
         }
     }
@@ -216,7 +172,7 @@ public class CSModelBox {
      * Check and correct the problem of dark texture.
      */
     private void checkBlockForShadow() {
-        Vec3d or = this.quadList[1].field_78239_a[0].vector3D;
+        Vector3d or = this.quadList[1].field_78239_a[0].vector3D;
         double x = this.quadList[0].field_78239_a[1].vector3D.x, y = this.quadList[1].field_78239_a[3].vector3D.y,
                 z = this.quadList[1].field_78239_a[1].vector3D.z;
         if (x - or.x < 0)
@@ -255,7 +211,7 @@ public class CSModelBox {
      * @param textUVs  The 6 pairs of points used to set the textures' UVs for each
      *                 faces.
      */
-    public void setTexture(RendererModel renderer, int[][] textUVs) {
+    public void setTexture(ModelPart renderer, int[][] textUVs) {
         int[] textUV;
         if (textUVs.length == 6)
             for (int i = 0; i < 6; i++) {
@@ -273,7 +229,7 @@ public class CSModelBox {
      * @param scale    Scale factor.
      */
     public void render(BufferBuilder renderer, float scale) {
-        for (TexturedQuad texturedquad : this.quadList)
+        for (ModelPart.Polygon texturedquad : this.quadList)
             texturedquad.draw(renderer, scale);
     }
 
@@ -293,7 +249,7 @@ public class CSModelBox {
      *
      * @return The TexturedQuad array.
      */
-    public TexturedQuad[] getQuadList() {
+    public ModelPart.Polygon[] getQuadList() {
         return this.quadList;
     }
 }

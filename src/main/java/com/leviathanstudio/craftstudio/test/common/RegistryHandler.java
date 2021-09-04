@@ -28,7 +28,12 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 public class RegistryHandler
 {
     public static final Block block_test = new BlockTest(Block.Properties.of(Material.STONE));
-    public static final BlockEntityType<?> tile_test = register("tileTest", BlockEntityType.Builder.of(TileEntityTest::new, block_test));
+    public static final BlockEntityType<TileEntityTest> tile_test = register("tileTest", BlockEntityType.Builder.of(TileEntityTest::new, block_test));
+
+    public static EntityType<EntityTest> ENTITY_TEST_1;
+    public static EntityType<EntityTest2> ENTITY_TEST_2;
+    public static EntityType<EntityTest3> ENTITY_TEST_3;
+    public static EntityType<EntityTest4> ENTITY_TEST_4;
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
@@ -48,18 +53,15 @@ public class RegistryHandler
 
     @SubscribeEvent
     public static void registerEntities(RegistryEvent.Register<EntityType<?>> event) {
-    	EntityType<EntityTest> entityTest = EntityType.Builder.of(EntityTest::new, MobCategory.MISC).build("entityTest");
-    	EntityType<EntityTest2> entityTest2 = EntityType.Builder.of(EntityTest2::new, MobCategory.MISC).build("entityTest2");
-    	EntityType<EntityTest3> entityTest3 = EntityType.Builder.of(EntityTest3::new, MobCategory.MISC).build("entityTest3");
-    	EntityType<EntityTest4> entityTest4 = EntityType.Builder.of(EntityTest4::new, MobCategory.MISC).build("entityTest4");
+        ENTITY_TEST_1 = EntityType.Builder.of(EntityTest::new, MobCategory.MISC).build("entityTest");
+        ENTITY_TEST_2 = EntityType.Builder.of(EntityTest2::new, MobCategory.MISC).build("entityTest2");
+        ENTITY_TEST_3 = EntityType.Builder.of(EntityTest3::new, MobCategory.MISC).build("entityTest3");
+        ENTITY_TEST_4 = EntityType.Builder.of(EntityTest4::new, MobCategory.MISC).build("entityTest4");
 
-
-    	event.getRegistry().register(entityTest.setRegistryName("test_1"));
-    	event.getRegistry().register(entityTest2.setRegistryName("test_2"));
-    	event.getRegistry().register(entityTest3.setRegistryName("test_3"));
-    	event.getRegistry().register(entityTest4.setRegistryName("test_4"));
-
-        ModTest.PROXY.registerEntityRender();
+        event.getRegistry().register(ENTITY_TEST_1.setRegistryName("test_1"));
+        event.getRegistry().register(ENTITY_TEST_2.setRegistryName("test_2"));
+        event.getRegistry().register(ENTITY_TEST_3.setRegistryName("test_3"));
+        event.getRegistry().register(ENTITY_TEST_4.setRegistryName("test_4"));
 
     }
 

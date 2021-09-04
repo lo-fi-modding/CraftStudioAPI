@@ -7,7 +7,6 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fml.client.registry.IRenderFactory;
 
 public class RenderTest4<T extends EntityTest4> extends LivingEntityRenderer<T, ModelCraftStudio<T>>
 {
@@ -23,10 +22,10 @@ public class RenderTest4<T extends EntityTest4> extends LivingEntityRenderer<T, 
         return new ResourceLocation(ModTest.MODID, "textures/entity/craftstudio_api_test.png");
     }
 
-    public static class Factory<T extends EntityTest4> implements IRenderFactory<T>
+    public static class Factory<T extends EntityTest4> implements EntityRendererProvider<T>
     {
         @Override
-        public EntityRenderer<? super T> createRenderFor(EntityRendererProvider.Context manager) {
+        public EntityRenderer<T> create(EntityRendererProvider.Context manager) {
             return new RenderTest4<T>(manager);
         }
 

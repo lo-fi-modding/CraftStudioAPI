@@ -11,8 +11,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.imageio.ImageIO;
-import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -34,8 +33,11 @@ public class UVMapCreator
     private int           maxu = 0, maxv = 0;
 
     public UVMapCreator(ResourceLocation modelIn) {
-        this.rModel = RegistryHandler.modelRegistry.getValue(modelIn)
-        		.orElseThrow(() -> new CSResourceNotRegisteredException(modelIn.toString()));
+        this.rModel = RegistryHandler.modelRegistry.get(modelIn);
+
+        if(this.rModel == null) {
+            throw new CSResourceNotRegisteredException(modelIn.toString());
+        }
     }
 
     public boolean createUVMap() {
@@ -58,7 +60,7 @@ public class UVMapCreator
     }
 
     private void getUVSizeByBlock(CSReadedModelBlock block) {
-        int[][] uvs = CSModelBox.getTextureUVsForRect(block.getTexOffset()[0], block.getTexOffset()[1], block.getSize().x, block.getSize().y, block.getSize().z);
+        int[][] uvs = CSModelBox.getTextureUVsForRect(block.getTexOffset()[0], block.getTexOffset()[1], block.getSize().x(), block.getSize().y(), block.getSize().z());
 
         for (int[] ti : uvs) {
             if (ti[0] > this.maxu)
@@ -84,7 +86,7 @@ public class UVMapCreator
     }
 
     private void drawUVForBlock(CSReadedModelBlock block, Graphics2D ig) {
-        int[][] textUvs = CSModelBox.getTextureUVsForRect(block.getTexOffset()[0], block.getTexOffset()[1], block.getSize().x, block.getSize().y, block.getSize().z);
+        int[][] textUvs = CSModelBox.getTextureUVsForRect(block.getTexOffset()[0], block.getTexOffset()[1], block.getSize().x(), block.getSize().y(), block.getSize().z());
         ig.setPaint(Color.MAGENTA);
         drawRect(textUvs[0], ig);
         ig.setPaint(Color.RED);

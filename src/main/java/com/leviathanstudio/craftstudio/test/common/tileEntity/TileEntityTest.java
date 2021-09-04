@@ -32,17 +32,16 @@ public class TileEntityTest extends AnimatedTileEntity
     }
 
     @SuppressWarnings("unchecked")
-	@Override
+	  @Override
     public AnimationHandler<TileEntityTest> getAnimationHandler() {
         return TileEntityTest.animHandler;
     }
 
-    @Override
-    public void tick() {
-        super.tick();
+    public static void tick(final Level level, final BlockPos pos, final BlockState state, final TileEntityTest te) {
+        AnimatedTileEntity.tick(level, pos, state, te);
 
-        if (this.isWorldRemote() && !this.getAnimationHandler().isAnimationActive(ModTest.MODID, "position", this))
-            this.getAnimationHandler().startAnimation(ModTest.MODID, "position", this);
+        if (te.isWorldRemote() && !te.getAnimationHandler().isAnimationActive(ModTest.MODID, "position", te))
+            te.getAnimationHandler().startAnimation(ModTest.MODID, "position", te);
 
     }
 }

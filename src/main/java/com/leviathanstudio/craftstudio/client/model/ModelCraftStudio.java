@@ -6,10 +6,10 @@ import com.leviathanstudio.craftstudio.client.json.CSReadedModel;
 import com.leviathanstudio.craftstudio.client.json.CSReadedModelBlock;
 import com.leviathanstudio.craftstudio.client.registry.RegistryHandler;
 import com.leviathanstudio.craftstudio.common.animation.IAnimated;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.renderer.entity.model.EntityModel;
-import net.minecraft.client.renderer.entity.model.RendererModel;
-import net.minecraft.client.renderer.model.PositionTextureVertex;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -30,6 +30,8 @@ import java.util.List;
 public class ModelCraftStudio<T extends Entity> extends EntityModel<T> {
 
     private List<CSModelRenderer> parentBlocks = new ArrayList<>();
+
+    private T entity;
 
     /**
      * @param modid       The ID of your mod
@@ -60,8 +62,12 @@ public class ModelCraftStudio<T extends Entity> extends EntityModel<T> {
         this.textureHeight = textureHeight;
 
         CSReadedModel rModel = RegistryHandler.modelRegistry
-        		.getValue(modelIn)
-        		.orElseThrow(() -> new CSResourceNotRegisteredException(modelIn.toString()));
+        		.get(modelIn);
+
+        if(rModel == null) {
+            throw new CSResourceNotRegisteredException(modelIn.toString());
+        }
+
         CSModelRenderer modelRend;
 
         for (CSReadedModelBlock rBlock : rModel.getParents()) {
@@ -69,26 +75,6 @@ public class ModelCraftStudio<T extends Entity> extends EntityModel<T> {
             this.parentBlocks.add(modelRend);
             this.generateChild(rBlock, modelRend);
         }
-    }
-
-    /**
-     * Return CSModelRenderer by his name and parts
-     */
-    public static CSModelRenderer getModelRendererFromNameAndBlock(String name, CSModelRenderer block) {
-        CSModelRenderer childModel, result;
-
-        if (block.boxName.equals(name))
-            return block;
-
-        for (RendererModel child : block.childModels)
-            if (child instanceof CSModelRenderer) {
-                childModel = (CSModelRenderer) child;
-                result = getModelRendererFromNameAndBlock(name, childModel);
-                if (result != null)
-                    return result;
-            }
-
-        return null;
     }
 
     /**
@@ -109,18 +95,18 @@ public class ModelCraftStudio<T extends Entity> extends EntityModel<T> {
     private CSModelRenderer generateCSModelRend(CSReadedModelBlock rBlock) {
         CSModelRenderer modelRend = new CSModelRenderer(this, rBlock.getName(), rBlock.getTexOffset()[0], rBlock.getTexOffset()[1]);
         if (rBlock.getVertex() != null) {
-            PositionTextureVertex vertices[] = new PositionTextureVertex[8];
+          ModelPart.Vertex vertices[] = new ModelPart.Vertex[8];
             for (int i = 0; i < 8; i++)
-                vertices[i] = new PositionTextureVertex(rBlock.getVertex()[i][0], rBlock.getVertex()[i][1], rBlock.getVertex()[i][2], 0.0F, 0.0F);
-            modelRend.addBox(vertices, CSModelBox.getTextureUVsForRect(rBlock.getTexOffset()[0], rBlock.getTexOffset()[1], rBlock.getSize().x,
-                    rBlock.getSize().y, rBlock.getSize().z));
+                vertices[i] = new ModelPart.Vertex(rBlock.getVertex()[i][0], rBlock.getVertex()[i][1], rBlock.getVertex()[i][2], 0.0F, 0.0F);
+            modelRend.addBox(vertices, CSModelBox.getTextureUVsForRect(rBlock.getTexOffset()[0], rBlock.getTexOffset()[1], rBlock.getSize().x(),
+                    rBlock.getSize().y(), rBlock.getSize().z()));
         } else
-            modelRend.addBox(-rBlock.getSize().x / 2, -rBlock.getSize().y / 2, -rBlock.getSize().z / 2, rBlock.getSize().x, rBlock.getSize().y,
-                    rBlock.getSize().z);
-        modelRend.setDefaultRotationPoint(rBlock.getRotationPoint().x, rBlock.getRotationPoint().y, rBlock.getRotationPoint().z);
-        modelRend.setInitialRotationMatrix(rBlock.getRotation().x, rBlock.getRotation().y, rBlock.getRotation().z);
-        modelRend.setDefaultOffset(rBlock.getOffset().x, rBlock.getOffset().y, rBlock.getOffset().z);
-        modelRend.setDefaultStretch(rBlock.getStretch().x, rBlock.getStretch().y, rBlock.getStretch().z);
+            modelRend.addBox(-rBlock.getSize().x() / 2, -rBlock.getSize().y() / 2, -rBlock.getSize().z() / 2, rBlock.getSize().x(), rBlock.getSize().y(),
+                    rBlock.getSize().z());
+        modelRend.setDefaultRotationPoint(rBlock.getRotationPoint().x(), rBlock.getRotationPoint().y(), rBlock.getRotationPoint().z());
+        modelRend.setInitialRotationMatrix(rBlock.getRotation().x(), rBlock.getRotation().y(), rBlock.getRotation().z());
+        modelRend.setDefaultOffset(rBlock.getOffset().x(), rBlock.getOffset().y(), rBlock.getOffset().z());
+        modelRend.setDefaultStretch(rBlock.getStretch().x(), rBlock.getStretch().y(), rBlock.getStretch().z());
         modelRend.setTextureSize(this.textureWidth, this.textureHeight);
         return modelRend;
     }
@@ -152,32 +138,29 @@ public class ModelCraftStudio<T extends Entity> extends EntityModel<T> {
             this.parentBlocks.get(i).render(modelScale);
     }
 
+    @Override
+    public void prepareMobModel(final T entity, final float p_102615_, final float p_102616_, final float p_102617_) {
+        super.prepareMobModel(entity, p_102615_, p_102616_, p_102617_);
+        this.entity = entity;
+    }
+
+    @Override
+    public void setupAnim(final T t, final float v, final float v1, final float v2, final float v3, final float v4) {
+
+    }
 
     /**
      * Render methods for an Entity
      */
     @Override
-    public void render(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-        super.render(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
-        ClientAnimationHandler.performAnimationInModel(this.parentBlocks, (IAnimated) entityIn);
-        for (int i = 0; i < this.parentBlocks.size(); i++)
-            this.parentBlocks.get(i).render(scale);
-    }
-
-    /**
-     * Return CSModelRenderer by his name
-     */
-    public CSModelRenderer getModelRendererFromName(String name) {
-        CSModelRenderer result;
-        for (CSModelRenderer parent : this.parentBlocks) {
-            result = getModelRendererFromNameAndBlock(name, parent);
-            if (result != null)
-                return result;
+    public void renderToBuffer(final PoseStack poseStack, final VertexConsumer buffer, final int lightmap, final int overlay, final float r, final float g, final float b, final float scale) {
+        ClientAnimationHandler.performAnimationInModel(this.parentBlocks, (IAnimated) this.entity);
+        for(CSModelRenderer parentBlock : this.parentBlocks) {
+            parentBlock.render(scale);
         }
-        return null;
     }
 
-    /**
+  /**
      * Getter
      */
     public List<CSModelRenderer> getParentBlocks() {

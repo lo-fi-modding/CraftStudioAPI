@@ -5,7 +5,6 @@ import com.leviathanstudio.craftstudio.common.animation.AnimationHandler;
 import com.leviathanstudio.craftstudio.common.animation.IAnimated;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -19,7 +18,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * @author Timmypote
  * @since 0.3.0
  */
-public abstract class AnimatedTileEntity extends BlockEntity implements IAnimated, ITickableTileEntity {
+public abstract class AnimatedTileEntity extends BlockEntity implements IAnimated {
     /**
      * The animation handler of this type of tile entity.
      */
@@ -33,7 +32,7 @@ public abstract class AnimatedTileEntity extends BlockEntity implements IAnimate
         //AnimatedTileEntity.animHandler.addAnim("yourModId", "yourAnimation", "yourModel", false);
     }
 
-    public AnimatedTileEntity(BlockEntityType<?> tileEntityTypeIn, final BlockPos pos, final BlockState state) {
+    public AnimatedTileEntity(final BlockEntityType<?> tileEntityTypeIn, final BlockPos pos, final BlockState state) {
         super(tileEntityTypeIn, pos, state);
     }
 
@@ -42,11 +41,10 @@ public abstract class AnimatedTileEntity extends BlockEntity implements IAnimate
      */
 
 
-    // You must call super.update() at the beginning of your update() method,
+    // You must call AnimatedTileEntity.update() at the beginning of your update() method,
     // or call the animationsUpdate() method like here.
-    @Override
-    public void tick() {
-        this.getAnimationHandler().animationsUpdate(this);
+    public static void tick(final Level level, final BlockPos pos, final BlockState state, final AnimatedTileEntity te) {
+        te.getAnimationHandler().animationsUpdate(te);
     }
 
     @Override
@@ -93,14 +91,14 @@ public abstract class AnimatedTileEntity extends BlockEntity implements IAnimate
 
     // Here to prevent bugs on the integrated server.
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj)
             return true;
         if (obj == null)
             return false;
         if (this.getClass() != obj.getClass())
             return false;
-        AnimatedTileEntity other = (AnimatedTileEntity) obj;
+        final AnimatedTileEntity other = (AnimatedTileEntity) obj;
         if (this.getBlockPos().getX() != other.getBlockPos().getX())
             return false;
         if (this.getBlockPos().getY() != other.getBlockPos().getY())

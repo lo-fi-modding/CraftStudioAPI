@@ -57,17 +57,15 @@ public class CSAnimChannel extends ClientChannel {
      */
     public CSAnimChannel(ResourceLocation animIn, ResourceLocation modelIn, float fps, boolean looped) throws CSResourceNotRegisteredException {
         super(animIn.toString(), false);
-        //TODO Check ifPresent()
-        this.rAnim = RegistryHandler.animationRegistry.getValue(animIn).get();
+        this.rAnim = RegistryHandler.animationRegistry.get(animIn);
         if (this.rAnim == null)
             throw new CSResourceNotRegisteredException(animIn.toString());
-        //TODO Check ifPresent()
-        this.rModel = RegistryHandler.modelRegistry.getValue(modelIn).get();
+        this.rModel = RegistryHandler.modelRegistry.get(modelIn);
         if (this.rModel == null)
             throw new CSResourceNotRegisteredException(modelIn.toString());
         if (!this.rModel.isAnimable()) {
-            CraftStudioApi.getLogger().warn("You are trying to animate the model \"" + modelIn.toString() + "\"");
-            CraftStudioApi.getLogger().warn("But it contains at least two blocks with the name \"" + this.rModel.whyUnAnimable() + "\"");
+            CraftStudioApi.getLogger().warn("You are trying to animate the model \"{}\"", modelIn.toString());
+            CraftStudioApi.getLogger().warn("But it contains at least two blocks with the name \"{}", this.rModel.whyUnAnimable() + "\"");
             CraftStudioApi.getLogger().warn("There could be weird result with your animation");
         }
         this.fps = fps;
