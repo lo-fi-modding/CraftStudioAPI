@@ -1,62 +1,50 @@
 package com.leviathanstudio.craftstudio;
 
-import com.leviathanstudio.craftstudio.common.animation.AnimationHandler;
-import com.leviathanstudio.craftstudio.common.animation.IAnimated;
-import com.leviathanstudio.craftstudio.proxy.CSClientProxy;
-import com.leviathanstudio.craftstudio.proxy.CSCommonProxy;
-import com.leviathanstudio.craftstudio.proxy.CSServerProxy;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.DistExecutor;
+import com.leviathanstudio.craftstudio.client.model.CsjsLoader;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.Material;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fmllegacy.RegistryObject;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/**
- * Main class of the CraftStudioApi
- *
- * @author ZeAmateis
- * @author Timmypote
- * @since 0.3.0
- */
 @Mod(CraftStudioApi.API_ID)
 public class CraftStudioApi {
     public static final String API_ID = "craftstudioapi";
 
-    private static final Logger LOGGER = LogManager.getLogger("CraftStudio");
-    private static final CSCommonProxy proxy = DistExecutor.safeRunForDist(() -> CSClientProxy::new, () -> CSServerProxy::new);
+    public static final Logger LOGGER = LogManager.getLogger(CraftStudioApi.class);
+
+    private static final DeferredRegister<Block> BLOCK_REGISTRY = DeferredRegister.create(ForgeRegistries.BLOCKS, API_ID);
+    private static final DeferredRegister<Item> ITEM_REGISTRY = DeferredRegister.create(ForgeRegistries.ITEMS, API_ID);
+
+    public static final RegistryObject<TestBlock> TEST_BLOCK = BLOCK_REGISTRY.register("test", () -> new TestBlock(BlockBehaviour.Properties.of(Material.STONE)));
+    public static final RegistryObject<BlockItem> TEST_ITEM = ITEM_REGISTRY.register("test", () -> new BlockItem(TEST_BLOCK.get(), new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
 
     public CraftStudioApi() {
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
-        MinecraftForge.EVENT_BUS.register(this);
+        final IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+
+        bus.addListener(this::registerModelLoader);
+
+        BLOCK_REGISTRY.register(bus);
+        ITEM_REGISTRY.register(bus);
     }
 
-    public static Logger getLogger() {
-        return CraftStudioApi.LOGGER;
+    private void registerModelLoader(final ModelRegistryEvent event) {
+        ModelLoaderRegistry.registerLoader(CraftStudioApi.loc("craftstudio"), new CsjsLoader());
     }
 
-    /**
-     * Helper to create an AnimationHandler to registry animation to your
-     * entity/block
-     *
-     * @param <T>
-     * @param animatedClass which implements IAnimated (Entity or TileEntity)
-     */
-    public static <T extends IAnimated> AnimationHandler<T> getNewAnimationHandler(Class<T> animatedClass) {
-        return CraftStudioApi.proxy.getNewAnimationHandler(animatedClass);
-
+    public static ResourceLocation loc(final String path) {
+        return new ResourceLocation(API_ID, path);
     }
-
-    public void clientSetup(FMLClientSetupEvent event) {
-        CraftStudioApi.proxy.clientSetup(event);
-    }
-
-    public void commonSetup(FMLCommonSetupEvent event) {
-        CraftStudioApi.proxy.commonSetup(event);
-    }
-
-
 }

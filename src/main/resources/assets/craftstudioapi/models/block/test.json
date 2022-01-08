@@ -1,0 +1,7 @@
+{
+  "loader": "craftstudioapi:craftstudio",
+  "model": "craftstudioapi:models/block/test.csjsmodel",
+  "textures": {
+    "texture": "craftstudioapi:block/test"
+  }
+}
