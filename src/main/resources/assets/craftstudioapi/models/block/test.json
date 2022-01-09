@@ -2,6 +2,7 @@
   "loader": "craftstudioapi:craftstudio",
   "model": "craftstudioapi:models/block/test.csjsmodel",
   "textures": {
-    "texture": "craftstudioapi:block/test"
+    "texturea": "minecraft:block/diamond_ore",
+    "texture": "craftstudioapi:block/architect_m"
   }
 }
