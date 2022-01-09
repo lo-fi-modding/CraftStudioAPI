@@ -132,63 +132,64 @@ public class CsjsModel implements IMultipartModelGeometry<CsjsModel> {
       final float u0 = part.uv.x() / texScale;
       final float v0 = part.uv.y() / texScale;
       final float u1x = (part.uv.x() + part.size.x()) / texScale;
-      final float u1y = (part.uv.x() + part.size.y()) / texScale;
       final float u1z = (part.uv.x() + part.size.z()) / texScale;
-      final float v1x = (part.uv.y() + part.size.x()) / texScale;
       final float v1y = (part.uv.y() + part.size.y()) / texScale;
       final float v1z = (part.uv.y() + part.size.z()) / texScale;
 
+      final float uvOffsetX = part.size.x() / texScale;
+      final float uvOffsetZ = part.size.z() / texScale;
+
       // North
       BakedQuadBuilder builder = new BakedQuadBuilder(sprite);
-      this.putVertexData(builder, new Vector4f(x0, y0, z0, 1.0f), new Vec2(u1z, v1z), Direction.NORTH.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
-      this.putVertexData(builder, new Vector4f(x0, y1, z0, 1.0f), new Vec2(u1z, v0 ), Direction.NORTH.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
-      this.putVertexData(builder, new Vector4f(x1, y1, z0, 1.0f), new Vec2(u0 , v0 ), Direction.NORTH.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
-      this.putVertexData(builder, new Vector4f(x1, y0, z0, 1.0f), new Vec2(u0 , v1z), Direction.NORTH.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
+      this.putVertexData(builder, new Vector4f(x0, y0, z0, 1.0f), new Vec2(uvOffsetX + uvOffsetZ * 2.0f + u1x, uvOffsetZ + v1y), Direction.NORTH.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
+      this.putVertexData(builder, new Vector4f(x0, y1, z0, 1.0f), new Vec2(uvOffsetX + uvOffsetZ * 2.0f + u1x, uvOffsetZ + v0 ), Direction.NORTH.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
+      this.putVertexData(builder, new Vector4f(x1, y1, z0, 1.0f), new Vec2(uvOffsetX + uvOffsetZ * 2.0f + u0 , uvOffsetZ + v0 ), Direction.NORTH.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
+      this.putVertexData(builder, new Vector4f(x1, y0, z0, 1.0f), new Vec2(uvOffsetX + uvOffsetZ * 2.0f + u0 , uvOffsetZ + v1y), Direction.NORTH.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
       builder.setQuadOrientation(Direction.NORTH);
       modelBuilder.addGeneralQuad(builder.build());
 
       // South
       builder = new BakedQuadBuilder(sprite);
-      this.putVertexData(builder, new Vector4f(x0, y0, z1, 1.0f), new Vec2(u0 , v1z), Direction.SOUTH.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
-      this.putVertexData(builder, new Vector4f(x1, y0, z1, 1.0f), new Vec2(u1z, v1z), Direction.SOUTH.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
-      this.putVertexData(builder, new Vector4f(x1, y1, z1, 1.0f), new Vec2(u1z, v0 ), Direction.SOUTH.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
-      this.putVertexData(builder, new Vector4f(x0, y1, z1, 1.0f), new Vec2(u0 , v0 ), Direction.SOUTH.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
+      this.putVertexData(builder, new Vector4f(x0, y0, z1, 1.0f), new Vec2(uvOffsetZ + u0 , uvOffsetZ + v1y), Direction.SOUTH.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
+      this.putVertexData(builder, new Vector4f(x1, y0, z1, 1.0f), new Vec2(uvOffsetZ + u1x, uvOffsetZ + v1y), Direction.SOUTH.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
+      this.putVertexData(builder, new Vector4f(x1, y1, z1, 1.0f), new Vec2(uvOffsetZ + u1x, uvOffsetZ + v0 ), Direction.SOUTH.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
+      this.putVertexData(builder, new Vector4f(x0, y1, z1, 1.0f), new Vec2(uvOffsetZ + u0 , uvOffsetZ + v0 ), Direction.SOUTH.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
       builder.setQuadOrientation(Direction.SOUTH);
       modelBuilder.addGeneralQuad(builder.build());
 
       // West
       builder = new BakedQuadBuilder(sprite);
-      this.putVertexData(builder, new Vector4f(x0, y0, z0, 1.0f), new Vec2(u0 , v1x), Direction.WEST.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
-      this.putVertexData(builder, new Vector4f(x0, y0, z1, 1.0f), new Vec2(u1x, v1x), Direction.WEST.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
-      this.putVertexData(builder, new Vector4f(x0, y1, z1, 1.0f), new Vec2(u1x, v0 ), Direction.WEST.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
-      this.putVertexData(builder, new Vector4f(x0, y1, z0, 1.0f), new Vec2(u0 , v0 ), Direction.WEST.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
+      this.putVertexData(builder, new Vector4f(x0, y0, z0, 1.0f), new Vec2(u0 , uvOffsetZ + v1y), Direction.WEST.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
+      this.putVertexData(builder, new Vector4f(x0, y0, z1, 1.0f), new Vec2(u1z, uvOffsetZ + v1y), Direction.WEST.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
+      this.putVertexData(builder, new Vector4f(x0, y1, z1, 1.0f), new Vec2(u1z, uvOffsetZ + v0 ), Direction.WEST.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
+      this.putVertexData(builder, new Vector4f(x0, y1, z0, 1.0f), new Vec2(u0 , uvOffsetZ + v0 ), Direction.WEST.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
       builder.setQuadOrientation(Direction.WEST);
       modelBuilder.addGeneralQuad(builder.build());
 
       // East
       builder = new BakedQuadBuilder(sprite);
-      this.putVertexData(builder, new Vector4f(x1, y0, z0, 1.0f), new Vec2(u1x, v1x), Direction.EAST.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
-      this.putVertexData(builder, new Vector4f(x1, y1, z0, 1.0f), new Vec2(u1x, v0 ), Direction.EAST.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
-      this.putVertexData(builder, new Vector4f(x1, y1, z1, 1.0f), new Vec2(u0 , v0 ), Direction.EAST.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
-      this.putVertexData(builder, new Vector4f(x1, y0, z1, 1.0f), new Vec2(u0 , v1x), Direction.EAST.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
+      this.putVertexData(builder, new Vector4f(x1, y0, z0, 1.0f), new Vec2(uvOffsetX + uvOffsetX + u1z, uvOffsetZ + v1y), Direction.EAST.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
+      this.putVertexData(builder, new Vector4f(x1, y1, z0, 1.0f), new Vec2(uvOffsetX + uvOffsetX + u1z, uvOffsetZ + v0 ), Direction.EAST.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
+      this.putVertexData(builder, new Vector4f(x1, y1, z1, 1.0f), new Vec2(uvOffsetX + uvOffsetX + u0 , uvOffsetZ + v0 ), Direction.EAST.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
+      this.putVertexData(builder, new Vector4f(x1, y0, z1, 1.0f), new Vec2(uvOffsetX + uvOffsetX + u0 , uvOffsetZ + v1y), Direction.EAST.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
       builder.setQuadOrientation(Direction.EAST);
       modelBuilder.addGeneralQuad(builder.build());
 
       // Up
       builder = new BakedQuadBuilder(sprite);
-      this.putVertexData(builder, new Vector4f(x0, y1, z0, 1.0f), new Vec2(u0 , v0 ), Direction.UP.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
-      this.putVertexData(builder, new Vector4f(x0, y1, z1, 1.0f), new Vec2(u0 , v1y), Direction.UP.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
-      this.putVertexData(builder, new Vector4f(x1, y1, z1, 1.0f), new Vec2(u1y, v1y), Direction.UP.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
-      this.putVertexData(builder, new Vector4f(x1, y1, z0, 1.0f), new Vec2(u1y, v0 ), Direction.UP.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
+      this.putVertexData(builder, new Vector4f(x0, y1, z0, 1.0f), new Vec2(uvOffsetX + u0 , v0 ), Direction.UP.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
+      this.putVertexData(builder, new Vector4f(x0, y1, z1, 1.0f), new Vec2(uvOffsetX + u0 , v1z), Direction.UP.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
+      this.putVertexData(builder, new Vector4f(x1, y1, z1, 1.0f), new Vec2(uvOffsetX + u1x, v1z), Direction.UP.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
+      this.putVertexData(builder, new Vector4f(x1, y1, z0, 1.0f), new Vec2(uvOffsetX + u1x, v0 ), Direction.UP.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
       builder.setQuadOrientation(Direction.UP);
       modelBuilder.addGeneralQuad(builder.build());
 
       // Down
       builder = new BakedQuadBuilder(sprite);
-      this.putVertexData(builder, new Vector4f(x0, y0, z0, 1.0f), new Vec2(u0 , v1y), Direction.DOWN.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
-      this.putVertexData(builder, new Vector4f(x1, y0, z0, 1.0f), new Vec2(u1y, v1y), Direction.DOWN.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
-      this.putVertexData(builder, new Vector4f(x1, y0, z1, 1.0f), new Vec2(u1y, v0 ), Direction.DOWN.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
-      this.putVertexData(builder, new Vector4f(x0, y0, z1, 1.0f), new Vec2(u0 , v0 ), Direction.DOWN.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
+      this.putVertexData(builder, new Vector4f(x0, y0, z0, 1.0f), new Vec2(uvOffsetX * 2.0f + u0 , v1z), Direction.DOWN.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
+      this.putVertexData(builder, new Vector4f(x1, y0, z0, 1.0f), new Vec2(uvOffsetX * 2.0f + u1x, v1z), Direction.DOWN.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
+      this.putVertexData(builder, new Vector4f(x1, y0, z1, 1.0f), new Vec2(uvOffsetX * 2.0f + u1x, v0 ), Direction.DOWN.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
+      this.putVertexData(builder, new Vector4f(x0, y0, z1, 1.0f), new Vec2(uvOffsetX * 2.0f + u0 , v0 ), Direction.DOWN.getNormal(), new Vector4f(1, 1, 1, 1), new Vec2(0, 0), sprite);
       builder.setQuadOrientation(Direction.DOWN);
       modelBuilder.addGeneralQuad(builder.build());
     }
