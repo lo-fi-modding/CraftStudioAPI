@@ -19,10 +19,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class CsjsLoader implements IModelLoader<CsjsModel> {
-  public static final Gson GSON = new GsonBuilder().registerTypeAdapter(CsjsModel.class, new CsjsModel.Deserializer()).create();
+public class CsjsLoader implements IModelLoader<CsjsBlockModel> {
+  public static final Gson GSON = new GsonBuilder().registerTypeAdapter(CsjsBlockModel.class, new CsjsBlockModel.Deserializer()).create();
 
-  private final Map<ResourceLocation, CsjsModel> modelCache = new HashMap<>();
+  private final Map<ResourceLocation, CsjsBlockModel> modelCache = new HashMap<>();
 
   private ResourceManager manager = Minecraft.getInstance().getResourceManager();
 
@@ -33,7 +33,7 @@ public class CsjsLoader implements IModelLoader<CsjsModel> {
   }
 
   @Override
-  public CsjsModel read(final JsonDeserializationContext deserializationContext, final JsonObject modelContents) {
+  public CsjsBlockModel read(final JsonDeserializationContext deserializationContext, final JsonObject modelContents) {
     if(!modelContents.has("model")) {
       throw new RuntimeException("CraftStudio Loader requires a 'model' key that points to a valid CraftStudio model.");
     }
@@ -43,10 +43,10 @@ public class CsjsLoader implements IModelLoader<CsjsModel> {
     return this.loadModel(new ResourceLocation(path));
   }
 
-  public CsjsModel loadModel(final ResourceLocation path) {
+  public CsjsBlockModel loadModel(final ResourceLocation path) {
     return this.modelCache.computeIfAbsent(path, modelPath -> {
       try(final Resource res = this.manager.getResource(modelPath)) {
-        return Objects.requireNonNull(GsonHelper.fromJson(GSON, new BufferedReader(new InputStreamReader(res.getInputStream())), CsjsModel.class));
+        return Objects.requireNonNull(GsonHelper.fromJson(GSON, new BufferedReader(new InputStreamReader(res.getInputStream())), CsjsBlockModel.class));
       } catch(final FileNotFoundException e) {
         throw new RuntimeException("Could not find CraftStudio model", e);
       } catch(IOException e) {
