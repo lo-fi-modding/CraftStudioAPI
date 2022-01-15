@@ -1,5 +1,7 @@
 package com.leviathanstudio.craftstudio;
 
+import com.leviathanstudio.craftstudio.client.model.ClientBootstrap;
+import com.leviathanstudio.craftstudio.client.model.CsjsModelTransformsMap;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -11,13 +13,16 @@ import net.minecraftforge.network.NetworkHooks;
 
 import java.util.Collections;
 
-public class TestEntity extends LivingEntity {
-  public TestEntity(final Level level) {
+public class CsjsEntity extends LivingEntity {
+  private CsjsModelTransformsMap transforms;
+
+  public CsjsEntity(final Level level) {
     this(CraftStudioApi.TEST_ENTITY.get(), level);
   }
 
-  public TestEntity(final EntityType<? extends LivingEntity> pEntityType, final Level pLevel) {
+  public CsjsEntity(final EntityType<? extends LivingEntity> pEntityType, final Level pLevel) {
     super(pEntityType, pLevel);
+    this.transforms = new CsjsModelTransformsMap(ClientBootstrap.ANIMATION_DATA.get(ClientBootstrap.MODEL));
   }
 
   @Override
@@ -43,5 +48,9 @@ public class TestEntity extends LivingEntity {
   @Override
   public Packet<?> getAddEntityPacket() {
     return NetworkHooks.getEntitySpawningPacket(this);
+  }
+
+  public CsjsModelTransformsMap getCsjsTransforms() {
+    return this.transforms;
   }
 }
