@@ -20,12 +20,12 @@ description='''A CraftStudio API for models/animations support in Minecraft'''
 [[dependencies.craftstudioapi]] #optional
     modId="forge" #mandatory
     mandatory=true #mandatory
-    versionRange="[37,)" #mandatory
+    versionRange="[39,)" #mandatory
     ordering="NONE"
     side="BOTH"
 [[dependencies.craftstudioapi]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.17.1]"
+    versionRange="[1.18.1]"
     ordering="NONE"
     side="BOTH"

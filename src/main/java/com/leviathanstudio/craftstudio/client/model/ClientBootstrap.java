@@ -43,7 +43,7 @@ public final class ClientBootstrap {
       }
 
       final Reader reader = new BufferedReader(new InputStreamReader(res.getInputStream(), Charsets.UTF_8));
-      final JsonObject json = new JsonParser().parse(reader).getAsJsonObject();
+      final JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
 
       final JsonArray tree = Objects.requireNonNull(GsonHelper.getAsJsonArray(json, "tree", null));
 
