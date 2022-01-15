@@ -10,12 +10,12 @@ public class CsjsEntityModel<T extends LivingEntity> extends EntityModel<T> {
   private final ModelPart part;
 
   protected CsjsEntityModel(final ModelPart part) {
-    this.part = part.getChild("main");
+    this.part = part;
   }
 
   @Override
   public void setupAnim(final T entity, final float limbSwing, final float limbSwingAmount, final float ageInTicks, final float netHeadYaw, final float headPitch) {
-
+    this.part.getChild("ArmRight").xRot += 0.1f;
   }
 
   @Override
