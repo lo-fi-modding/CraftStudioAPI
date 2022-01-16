@@ -12,7 +12,6 @@ import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +35,7 @@ public final class ClientBootstrap {
       MeshDefinition meshDef = new MeshDefinition();
       PartDefinition partDef = meshDef.getRoot();
 
-      loadParts(transforms.roots(), partDef, null);
+      loadParts(transforms.roots(), partDef);
 
       return LayerDefinition.create(meshDef, 64, 64);
     });
@@ -47,14 +46,10 @@ public final class ClientBootstrap {
     event.registerEntityRenderer(CraftStudioApi.TEST_ENTITY.get(), ctx -> new CsjsEntityRenderer<>(ctx, LAYER));
   }
 
-  private static Map<String, CsjsModelTransforms> loadParts(final Collection<CsjsModelTransforms> children, final PartDefinition partDef, @Nullable final CsjsModelTransforms parent) {
-    final Map<String, CsjsModelTransforms> animationData = new HashMap<>();
-
+  private static void loadParts(final Collection<CsjsModelTransforms> children, final PartDefinition partDef) {
     for(final CsjsModelTransforms transform : children) {
       partDef.addOrReplaceChild(transform.name(), CubeListBuilder.create().texOffs((int)transform.uv().x(), (int)transform.uv().y()).addBox(-transform.size().x() / 2, -transform.size().y() / 2, -transform.size().z() / 2, transform.size().x(), transform.size().y(), transform.size().z()), PartPose.ZERO);
-      loadParts(transform.children().values(), partDef, transform);
+      loadParts(transform.children().values(), partDef);
     }
-
-    return animationData;
   }
 }
