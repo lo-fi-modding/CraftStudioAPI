@@ -45,6 +45,7 @@ public class CsjsModelTransformsMap {
     return this.transforms.values();
   }
 
+  @Nullable
   public CsjsModelTransforms get(final String name) {
     return this.flattened.get(name);
   }

@@ -10,8 +10,6 @@ import com.leviathanstudio.craftstudio.client.model.CsjsLoader;
 import com.leviathanstudio.craftstudio.client.model.CsjsModelTransforms;
 import com.leviathanstudio.craftstudio.client.model.CsjsModelTransformsMap;
 import com.mojang.math.Vector3f;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
@@ -43,7 +41,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -108,10 +108,10 @@ public class CraftStudioApi {
     for(final Map.Entry<String, JsonElement> partJsonElement : partsJson.entrySet()) {
       final JsonObject partJson = partJsonElement.getValue().getAsJsonObject();
 
-      final Int2ObjectMap<Vector3f> pos = parseAnimSet(GsonHelper.getAsJsonObject(partJson, "position"));
-      final Int2ObjectMap<Vector3f> offset = parseAnimSet(GsonHelper.getAsJsonObject(partJson, "offsetFromPivot"));
-      final Int2ObjectMap<Vector3f> size = parseAnimSet(GsonHelper.getAsJsonObject(partJson, "size"));
-      final Int2ObjectMap<Vector3f> rotation = parseAnimSet(GsonHelper.getAsJsonObject(partJson, "rotation"));
+      final List<CsjsAnimation.Part.Keyframe> pos = parseKeyframes(GsonHelper.getAsJsonObject(partJson, "position"));
+      final List<CsjsAnimation.Part.Keyframe> offset = parseKeyframes(GsonHelper.getAsJsonObject(partJson, "offsetFromPivot"));
+      final List<CsjsAnimation.Part.Keyframe> size = parseKeyframes(GsonHelper.getAsJsonObject(partJson, "size"));
+      final List<CsjsAnimation.Part.Keyframe> rotation = parseKeyframes(GsonHelper.getAsJsonObject(partJson, "rotation"));
 
       parts.put(partJsonElement.getKey(), new CsjsAnimation.Part(pos, offset, size, rotation));
     }
@@ -159,11 +159,16 @@ public class CraftStudioApi {
     return JsonParser.parseReader(reader).getAsJsonObject();
   }
 
-  private static Int2ObjectMap<Vector3f> parseAnimSet(final JsonObject json) {
-    final Int2ObjectMap<Vector3f> animSet = new Int2ObjectOpenHashMap<>();
+  private static List<CsjsAnimation.Part.Keyframe> parseKeyframes(final JsonObject json) {
+    final List<CsjsAnimation.Part.Keyframe> animSet = new ArrayList<>();
 
     for(final Map.Entry<String, JsonElement> entry : json.entrySet()) {
-      animSet.put(Integer.parseInt(entry.getKey()), parseVec3(entry.getValue().getAsJsonArray()));
+      final CsjsAnimation.Part.Keyframe keyframe = new CsjsAnimation.Part.Keyframe(Integer.parseInt(entry.getKey()), parseVec3(entry.getValue().getAsJsonArray()));
+
+      keyframe.vec().setY(-keyframe.vec().y());
+      keyframe.vec().setZ(-keyframe.vec().z());
+
+      animSet.add(keyframe);
     }
 
     return animSet;
