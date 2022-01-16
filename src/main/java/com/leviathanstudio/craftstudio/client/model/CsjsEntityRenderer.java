@@ -1,14 +1,15 @@
 package com.leviathanstudio.craftstudio.client.model;
 
-import com.leviathanstudio.craftstudio.CsjsEntity;
+import com.leviathanstudio.craftstudio.CsjsAnimatedEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 
-public class CsjsEntityRenderer<T extends CsjsEntity> extends LivingEntityRenderer<T, CsjsEntityModel<T>> {
+public class CsjsEntityRenderer<T extends LivingEntity & CsjsAnimatedEntity> extends LivingEntityRenderer<T, CsjsEntityModel<T>> {
   private static final ResourceLocation TEXTURE = new ResourceLocation("craftstudioapi:textures/entity/architect_m.png");
 
   public CsjsEntityRenderer(final EntityRendererProvider.Context ctx, final ModelLayerLocation layerLoc) {
@@ -17,7 +18,7 @@ public class CsjsEntityRenderer<T extends CsjsEntity> extends LivingEntityRender
 
   @Override
   public void render(T pEntity, float pEntityYaw, float pPartialTicks, PoseStack pMatrixStack, MultiBufferSource pBuffer, int pPackedLight) {
-    this.model.setTransforms(pEntity.getCsjsTransforms());
+    this.model.setTransforms(pEntity.getAnimationState().getTransforms());
     super.render(pEntity, pEntityYaw, pPartialTicks, pMatrixStack, pBuffer, pPackedLight);
   }
 
