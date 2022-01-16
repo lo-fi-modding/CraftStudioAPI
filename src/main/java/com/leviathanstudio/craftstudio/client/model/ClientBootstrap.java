@@ -24,7 +24,7 @@ public final class ClientBootstrap {
 
   public static final ModelLayerLocation LAYER = new ModelLayerLocation(CraftStudioApi.loc("test"), "test_layer");
 
-  public static final ResourceLocation MODEL = CraftStudioApi.loc("models/block/test.csjsmodel");
+  public static final ResourceLocation MODEL = CraftStudioApi.loc("models/entity/test.csjsmodel");
 
   @SubscribeEvent
   public static void registerLayerDefinitions(final EntityRenderersEvent.RegisterLayerDefinitions event) {

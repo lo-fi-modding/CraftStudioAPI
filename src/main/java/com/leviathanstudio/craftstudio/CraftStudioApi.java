@@ -6,7 +6,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.leviathanstudio.craftstudio.client.model.CsjsAnimation;
-import com.leviathanstudio.craftstudio.client.model.CsjsLoader;
 import com.leviathanstudio.craftstudio.client.model.CsjsModelTransforms;
 import com.leviathanstudio.craftstudio.client.model.CsjsModelTransformsMap;
 import com.mojang.math.Vector3f;
@@ -18,8 +17,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -54,7 +51,6 @@ public class CraftStudioApi {
   public CraftStudioApi() {
     final IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 
-    bus.addListener(this::registerModelLoader);
     bus.addListener(this::registerEntityAttributes);
 
     ENTITY_TYPE_REGISTRY.register(bus);
@@ -62,10 +58,6 @@ public class CraftStudioApi {
 
   private void registerEntityAttributes(final EntityAttributeCreationEvent event) {
     event.put(TEST_ENTITY.get(), Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, 1.0d).build());
-  }
-
-  private void registerModelLoader(final ModelRegistryEvent event) {
-    ModelLoaderRegistry.registerLoader(CraftStudioApi.loc("craftstudio"), new CsjsLoader());
   }
 
   public static ResourceLocation loc(final String path) {
