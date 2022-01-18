@@ -5,7 +5,6 @@
   "nodeAnimations": {
     "BodyInner": {
       "position": {
-        "0": [ 0, 0, 0 ]
       },
       "offsetFromPivot": {
       },
@@ -24,7 +23,6 @@
     },
     "ArmLeft": {
       "position": {
-        "0": [ 0, 0, 0 ]
       },
       "offsetFromPivot": {
       },
@@ -65,7 +63,6 @@
     },
     "ArmRight": {
       "position": {
-        "0": [ 0, 0, 0 ]
       },
       "offsetFromPivot": {
       },
@@ -108,7 +105,6 @@
     },
     "Head": {
       "position": {
-        "0": [ 0, 0, 0 ]
       },
       "offsetFromPivot": {
       },

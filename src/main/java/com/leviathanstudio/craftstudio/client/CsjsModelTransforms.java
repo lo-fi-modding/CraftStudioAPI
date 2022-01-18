@@ -1,4 +1,4 @@
-package com.leviathanstudio.craftstudio.client.model;
+package com.leviathanstudio.craftstudio.client;
 
 import com.mojang.math.Vector3f;
 

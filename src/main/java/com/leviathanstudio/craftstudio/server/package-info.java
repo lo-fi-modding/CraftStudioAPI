@@ -1,6 +1,6 @@
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-package com.leviathanstudio.craftstudio.client.model;
+package com.leviathanstudio.craftstudio.server;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 

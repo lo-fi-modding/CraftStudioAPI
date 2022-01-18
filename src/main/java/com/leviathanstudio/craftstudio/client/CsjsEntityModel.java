@@ -1,30 +1,29 @@
-package com.leviathanstudio.craftstudio.client.model;
+package com.leviathanstudio.craftstudio.client;
 
-import com.leviathanstudio.craftstudio.CsjsAnimatedEntity;
+import com.leviathanstudio.craftstudio.CsjsEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Quaternion;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.world.entity.LivingEntity;
 
 import java.util.Collection;
 
-public class CsjsEntityModel<T extends LivingEntity & CsjsAnimatedEntity> extends EntityModel<T> {
+public class CsjsEntityModel<T extends CsjsEntity> extends EntityModel<T> {
   private final ModelPart part;
-  private CsjsModelTransformsMap transforms;
+  private CsjsModelData transforms;
 
   protected CsjsEntityModel(final ModelPart part) {
     this.part = part;
   }
 
-  public void setTransforms(final CsjsModelTransformsMap transforms) {
+  public void setTransforms(final CsjsModelData transforms) {
     this.transforms = transforms;
   }
 
   @Override
   public void setupAnim(final T entity, final float limbSwing, final float limbSwingAmount, final float ageInTicks, final float netHeadYaw, final float headPitch) {
-    entity.getAnimationState().tick();
+    ((CsjsClientAnimationState)entity.getAnimationState()).tick();
   }
 
   @Override

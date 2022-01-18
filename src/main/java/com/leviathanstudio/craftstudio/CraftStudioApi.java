@@ -5,9 +5,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.leviathanstudio.craftstudio.client.model.CsjsAnimation;
-import com.leviathanstudio.craftstudio.client.model.CsjsModelTransforms;
-import com.leviathanstudio.craftstudio.client.model.CsjsModelTransformsMap;
+import com.leviathanstudio.craftstudio.client.ClientBootstrap;
+import com.leviathanstudio.craftstudio.client.CsjsAnimation;
+import com.leviathanstudio.craftstudio.client.CsjsModelTransforms;
+import com.leviathanstudio.craftstudio.client.CsjsModelData;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
@@ -17,7 +18,9 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -37,6 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 
 @Mod(CraftStudioApi.API_ID)
 public class CraftStudioApi {
@@ -46,7 +50,10 @@ public class CraftStudioApi {
 
   private static final DeferredRegister<EntityType<?>> ENTITY_TYPE_REGISTRY = DeferredRegister.create(ForgeRegistries.ENTITIES, API_ID);
 
-  public static final RegistryObject<EntityType<CsjsTestEntity>> TEST_ENTITY = ENTITY_TYPE_REGISTRY.register("test", () -> EntityType.Builder.<CsjsTestEntity>of(CsjsTestEntity::new, MobCategory.AMBIENT).sized(0.6f, 1.95f).clientTrackingRange(10).build("test"));
+  public static final RegistryObject<EntityType<CsjsEntity>> TEST_ENTITY = ENTITY_TYPE_REGISTRY.register("test", () -> EntityType.Builder.<CsjsEntity>of((type, level) -> new CsjsEntity(type, level, ClientBootstrap.MODEL), MobCategory.AMBIENT).sized(0.6f, 1.95f).clientTrackingRange(10).build("test"));
+
+  private static final Map<ResourceLocation, CsjsAnimation> ANIMATION_CACHE = new HashMap<>();
+  private static final Map<ResourceLocation, CsjsModelData> MODEL_CACHE = new HashMap<>();
 
   public CraftStudioApi() {
     final IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -54,32 +61,66 @@ public class CraftStudioApi {
     bus.addListener(this::registerEntityAttributes);
 
     ENTITY_TYPE_REGISTRY.register(bus);
+
+    MinecraftForge.EVENT_BUS.addListener(this::entitySpawnEvent);
   }
 
   private void registerEntityAttributes(final EntityAttributeCreationEvent event) {
     event.put(TEST_ENTITY.get(), Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, 1.0d).build());
   }
 
+  private void entitySpawnEvent(final EntityJoinWorldEvent event) {
+    if(event.getEntity() instanceof CsjsEntity && !event.getWorld().isClientSide() && ((CsjsEntity)event.getEntity()).getAnimationState().getCurrentAnimation() == null) {
+      final String[] anims = {
+        "villager_cast_bless",
+        "villager_chop",
+        "villager_cook",
+        "villager_eat",
+        "villager_flute_1",
+        "villager_hammer",
+        "villager_hoe",
+        "villager_pickup",
+        "villager_read",
+        "villager_run",
+        "villager_salute",
+        "villager_walk",
+        "villager_wave",
+      };
+
+      final ResourceLocation anim = loc("animations/" + anims[new Random().nextInt(anims.length)] + ".csjsmodelanim");
+      LOGGER.info("Entity {} anim {}", event.getEntity(), anim);
+      ((CsjsEntity)event.getEntity()).getAnimationState().startAnimation(anim);
+    }
+  }
+
   public static ResourceLocation loc(final String path) {
     return new ResourceLocation(API_ID, path);
   }
 
-  public static CsjsModelTransformsMap loadModel(final ResourceLocation file) {
+  public static CsjsAnimation getAnimation(final ResourceLocation file) {
+    return ANIMATION_CACHE.computeIfAbsent(file, CraftStudioApi::loadAnimation);
+  }
+
+  public static CsjsModelData getModel(final ResourceLocation file) {
+    return MODEL_CACHE.computeIfAbsent(file, CraftStudioApi::loadModel);
+  }
+
+  private static CsjsModelData loadModel(final ResourceLocation file) {
     final JsonObject json = loadJson(file);
 
     final JsonArray tree = Objects.requireNonNull(GsonHelper.getAsJsonArray(json, "tree", null));
 
-    return new CsjsModelTransformsMap(loadParts(tree, null));
+    return new CsjsModelData(loadParts(tree, null));
   }
 
-  public static CsjsAnimation loadAnimation(final ResourceLocation file) {
+  private static CsjsAnimation loadAnimation(final ResourceLocation file) {
     final JsonObject json = loadJson(file);
 
     final String title = GsonHelper.getAsString(json, "title");
     final int duration = GsonHelper.getAsInt(json, "duration");
 
     if(GsonHelper.getAsBoolean(json, "holdLastKeyframe", false)) {
-      throw new RuntimeException("Don't know what holdLastKeyframe does");
+//TODO      throw new RuntimeException("Don't know what holdLastKeyframe does");
     }
 
     final Map<String, CsjsAnimation.Part> parts = new HashMap<>();
@@ -96,7 +137,7 @@ public class CraftStudioApi {
       parts.put(partJsonElement.getKey(), new CsjsAnimation.Part(pos, offset, size, rotation));
     }
 
-    return new CsjsAnimation(title, duration, parts);
+    return new CsjsAnimation(file, title, duration, parts);
   }
 
   private static Map<String, CsjsModelTransforms> loadParts(final JsonArray jsonArray, @Nullable final CsjsModelTransforms parent) {

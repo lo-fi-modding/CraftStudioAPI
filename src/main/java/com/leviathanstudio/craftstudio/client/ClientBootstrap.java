@@ -1,4 +1,4 @@
-package com.leviathanstudio.craftstudio.client.model;
+package com.leviathanstudio.craftstudio.client;
 
 import com.leviathanstudio.craftstudio.CraftStudioApi;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -13,14 +13,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = CraftStudioApi.API_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class ClientBootstrap {
   private ClientBootstrap() { }
-
-  public static final Map<ResourceLocation, CsjsModelTransformsMap> ANIMATION_DATA = new HashMap<>();
 
   public static final ModelLayerLocation LAYER = new ModelLayerLocation(CraftStudioApi.loc("test"), "test_layer");
 
@@ -29,8 +25,7 @@ public final class ClientBootstrap {
   @SubscribeEvent
   public static void registerLayerDefinitions(final EntityRenderersEvent.RegisterLayerDefinitions event) {
     event.registerLayerDefinition(LAYER, () -> {
-      final CsjsModelTransformsMap transforms = CraftStudioApi.loadModel(MODEL);
-      ANIMATION_DATA.put(MODEL, transforms);
+      final CsjsModelData transforms = CraftStudioApi.getModel(MODEL);
 
       MeshDefinition meshDef = new MeshDefinition();
       PartDefinition partDef = meshDef.getRoot();

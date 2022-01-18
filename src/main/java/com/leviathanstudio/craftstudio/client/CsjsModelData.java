@@ -1,20 +1,20 @@
-package com.leviathanstudio.craftstudio.client.model;
+package com.leviathanstudio.craftstudio.client;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CsjsModelTransformsMap {
+public class CsjsModelData {
   private final Map<String, CsjsModelTransforms> transforms;
   private final Map<String, CsjsModelTransforms> flattened = new HashMap<>();
 
-  public CsjsModelTransformsMap(final Map<String, CsjsModelTransforms> transforms) {
+  public CsjsModelData(final Map<String, CsjsModelTransforms> transforms) {
     this.transforms = transforms;
     flatten(flattened, transforms);
   }
 
-  public CsjsModelTransformsMap(final CsjsModelTransformsMap other) {
+  public CsjsModelData(final CsjsModelData other) {
     this(copy(null, other.transforms));
   }
 
