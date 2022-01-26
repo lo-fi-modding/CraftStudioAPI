@@ -16,9 +16,9 @@ apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '1.0.2'
-group = 'com.leviathanstudio' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'CraftStudioAPI'
+version = '1.0.0'
+group = 'lofimodding' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = 'craftstudio-api'
 
 compileJava.options.encoding = 'UTF-8'
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
@@ -89,12 +89,12 @@ dependencies {
 jar {
     manifest {
         attributes([
-                "Specification-Title": "crafstudio_api",
-                "Specification-Vendor": "LeviathanStudio",
+                "Specification-Title": "crafstudio-api",
+                "Specification-Vendor": "lofimodding",
                 "Specification-Version": "1", // We are version 1 of ourselves
-                "Implementation-Title": project.name,
+                "Implementation-Title": "craftstudio-api",
                 "Implementation-Version": "${version}",
-                "Implementation-Vendor" :"LeviathanStudio",
+                "Implementation-Vendor" :"lofimodding",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }

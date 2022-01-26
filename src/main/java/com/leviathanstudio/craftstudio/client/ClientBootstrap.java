@@ -27,8 +27,8 @@ public final class ClientBootstrap {
     event.registerLayerDefinition(LAYER, () -> {
       final CsjsModelData transforms = CraftStudioApi.getModel(MODEL);
 
-      MeshDefinition meshDef = new MeshDefinition();
-      PartDefinition partDef = meshDef.getRoot();
+      final MeshDefinition meshDef = new MeshDefinition();
+      final PartDefinition partDef = meshDef.getRoot();
 
       loadParts(transforms.roots(), partDef);
 

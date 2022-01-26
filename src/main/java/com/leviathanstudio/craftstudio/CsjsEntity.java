@@ -9,16 +9,11 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkHooks;
 
-import java.util.Collections;
-
-public class CsjsEntity extends LivingEntity {
+public class CsjsEntity extends PathfinderMob {
   public static final EntityDataAccessor<String> DATA_ANIMATION = SynchedEntityData.defineId(CsjsEntity.class, EntityDataSerializers.STRING);
 
   private final CsjsAnimationState animationState;
@@ -27,7 +22,7 @@ public class CsjsEntity extends LivingEntity {
     this(CraftStudioApi.TEST_ENTITY.get(), level, model);
   }
 
-  public CsjsEntity(final EntityType<? extends LivingEntity> type, final Level level, final ResourceLocation model) {
+  public CsjsEntity(final EntityType<? extends PathfinderMob> type, final Level level, final ResourceLocation model) {
     super(type, level);
 
     if(level.isClientSide()) {
@@ -48,32 +43,12 @@ public class CsjsEntity extends LivingEntity {
   }
 
   @Override
-  public Iterable<ItemStack> getArmorSlots() {
-    return Collections.emptyList();
-  }
-
-  @Override
-  public ItemStack getItemBySlot(final EquipmentSlot pSlot) {
-    return ItemStack.EMPTY;
-  }
-
-  @Override
-  public void setItemSlot(final EquipmentSlot pSlot, final ItemStack pStack) {
-
-  }
-
-  @Override
-  public HumanoidArm getMainArm() {
-    return HumanoidArm.RIGHT;
-  }
-
-  @Override
   public Packet<?> getAddEntityPacket() {
     return NetworkHooks.getEntitySpawningPacket(this);
   }
 
   @Override
-  public void addAdditionalSaveData(CompoundTag tag) {
+  public void addAdditionalSaveData(final CompoundTag tag) {
     super.addAdditionalSaveData(tag);
 
     final ResourceLocation anim = this.getAnimationState().getCurrentAnimation();
@@ -84,7 +59,7 @@ public class CsjsEntity extends LivingEntity {
   }
 
   @Override
-  public void readAdditionalSaveData(CompoundTag tag) {
+  public void readAdditionalSaveData(final CompoundTag tag) {
     super.readAdditionalSaveData(tag);
 
     if(tag.contains("CraftStudioAnimation")) {

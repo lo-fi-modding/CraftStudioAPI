@@ -16,9 +16,9 @@ public class CsjsEntityRenderer<T extends CsjsEntity> extends LivingEntityRender
   }
 
   @Override
-  public void render(T pEntity, float pEntityYaw, float pPartialTicks, PoseStack pMatrixStack, MultiBufferSource pBuffer, int pPackedLight) {
-    this.model.setTransforms(((CsjsClientAnimationState)pEntity.getAnimationState()).getTransforms());
-    super.render(pEntity, pEntityYaw, pPartialTicks, pMatrixStack, pBuffer, pPackedLight);
+  public void render(final T entity, final float yaw, final float partialTicks, final PoseStack matrixStack, final MultiBufferSource buffer, final int packedLight) {
+    this.model.setTransforms(((CsjsClientAnimationState)entity.getAnimationState()).getTransforms());
+    super.render(entity, yaw, partialTicks, matrixStack, buffer, packedLight);
   }
 
   @Override

@@ -37,8 +37,6 @@ public class CsjsClientAnimationState implements CsjsAnimationState {
 
   @Override
   public void startAnimation(final ResourceLocation animation) {
-    System.out.println("------------------ starting anim " + animation);
-
     this.originalTransforms = new CsjsModelData(this.transforms);
     this.animation = CraftStudioApi.getAnimation(animation);
     this.animName = animation.toString();
@@ -92,14 +90,15 @@ public class CsjsClientAnimationState implements CsjsAnimationState {
     this.checkForAnimChange();
 
     if(this.animation != null) {
-      for(final String partName : this.partNextKeyframes.keySet()) {
+      for(final Map.Entry<String, KeyframeIndices> entry : this.partNextKeyframes.entrySet()) {
+        final String partName = entry.getKey();
         final CsjsModelTransforms partTransforms = this.transforms.get(partName);
 
         if(partTransforms != null) {
           final CsjsAnimation.Part animPart = this.animation.parts().get(partName);
 
-          if(animPart.pos().size() != 0) {
-            final int nextPosKeyframeIndex = Math.min(this.partNextKeyframes.get(partName).pos, animPart.pos().size() - 1);
+          if(!animPart.pos().isEmpty()) {
+            final int nextPosKeyframeIndex = Math.min(entry.getValue().pos, animPart.pos().size() - 1);
             final int currentPosKeyframeIndex = Math.min(this.partCurrentKeyframes.get(partName).pos, animPart.pos().size() - 1);
 
             final CsjsAnimation.Part.Keyframe nextKeyframe = animPart.pos().get(nextPosKeyframeIndex);
@@ -110,8 +109,8 @@ public class CsjsClientAnimationState implements CsjsAnimationState {
             partTransforms.pos().add(this.originalTransforms.get(partName).pos());
           }
 
-          if(animPart.offset().size() != 0) {
-            final int nextOffsetKeyframeIndex = Math.min(this.partNextKeyframes.get(partName).offset, animPart.offset().size() - 1);
+          if(!animPart.offset().isEmpty()) {
+            final int nextOffsetKeyframeIndex = Math.min(entry.getValue().offset, animPart.offset().size() - 1);
             final int currentOffsetKeyframeIndex = Math.min(this.partCurrentKeyframes.get(partName).offset, animPart.offset().size() - 1);
 
             final CsjsAnimation.Part.Keyframe nextKeyframe = animPart.offset().get(nextOffsetKeyframeIndex);
@@ -122,8 +121,8 @@ public class CsjsClientAnimationState implements CsjsAnimationState {
             partTransforms.offset().add(this.originalTransforms.get(partName).offset());
           }
 
-          if(animPart.rotation().size() != 0) {
-            final int nextRotationKeyframeIndex = Math.min(this.partNextKeyframes.get(partName).rotation, animPart.rotation().size() - 1);
+          if(!animPart.rotation().isEmpty()) {
+            final int nextRotationKeyframeIndex = Math.min(entry.getValue().rotation, animPart.rotation().size() - 1);
             final int currentRotationKeyframeIndex = Math.min(this.partCurrentKeyframes.get(partName).rotation, animPart.rotation().size() - 1);
 
             final CsjsAnimation.Part.Keyframe nextKeyframe = animPart.rotation().get(nextRotationKeyframeIndex);
@@ -134,8 +133,8 @@ public class CsjsClientAnimationState implements CsjsAnimationState {
             partTransforms.rotation().add(this.originalTransforms.get(partName).rotation());
           }
 
-          if(animPart.size().size() != 0) {
-            final int nextSizeKeyframeIndex = Math.min(this.partNextKeyframes.get(partName).size, animPart.size().size() - 1);
+          if(!animPart.size().isEmpty()) {
+            final int nextSizeKeyframeIndex = Math.min(entry.getValue().size, animPart.size().size() - 1);
             final int currentSizeKeyframeIndex = Math.min(this.partCurrentKeyframes.get(partName).size, animPart.size().size() - 1);
 
             final CsjsAnimation.Part.Keyframe nextKeyframe = animPart.size().get(nextSizeKeyframeIndex);
@@ -155,7 +154,7 @@ public class CsjsClientAnimationState implements CsjsAnimationState {
 
         final CsjsAnimation.Part animPart = this.animation.parts().get(partName);
 
-        if(animPart.pos().size() != 0) {
+        if(!animPart.pos().isEmpty()) {
           final CsjsClientAnimationState.KeyframeIndices keyframeIndices = entry.getValue();
 
           final int nextKeyframeIndex = Math.min(keyframeIndices.pos, animPart.pos().size() - 1);
@@ -165,7 +164,7 @@ public class CsjsClientAnimationState implements CsjsAnimationState {
           }
         }
 
-        if(animPart.offset().size() != 0) {
+        if(!animPart.offset().isEmpty()) {
           final CsjsClientAnimationState.KeyframeIndices keyframeIndices = entry.getValue();
 
           final int nextKeyframeIndex = Math.min(keyframeIndices.offset, animPart.offset().size() - 1);
@@ -175,7 +174,7 @@ public class CsjsClientAnimationState implements CsjsAnimationState {
           }
         }
 
-        if(animPart.rotation().size() != 0) {
+        if(!animPart.rotation().isEmpty()) {
           final CsjsClientAnimationState.KeyframeIndices keyframeIndices = entry.getValue();
 
           final int nextKeyframeIndex = Math.min(keyframeIndices.rotation, animPart.rotation().size() - 1);
@@ -185,7 +184,7 @@ public class CsjsClientAnimationState implements CsjsAnimationState {
           }
         }
 
-        if(animPart.size().size() != 0) {
+        if(!animPart.size().isEmpty()) {
           final CsjsClientAnimationState.KeyframeIndices keyframeIndices = entry.getValue();
 
           final int nextKeyframeIndex = Math.min(keyframeIndices.size, animPart.size().size() - 1);
